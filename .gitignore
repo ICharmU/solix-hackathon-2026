@@ -11,6 +11,7 @@ data/frames/
 data/audio/
 data/processed/
 data/test_fixtures/
+data/artifacts/
 data/*.mp4
 data/*.mkv
 data/*.wav

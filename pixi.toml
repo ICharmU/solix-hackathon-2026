@@ -16,6 +16,7 @@ stitch-workflows = "python -m src.workflow_stitcher"
 synthesize = "python -m src.tier2_synthesis"
 generate-automations = "python -m src.automation_generator"
 dashboard = "python -m src.dashboard_generator"
+serve = "python -m src.web.app --port 8000"
 test-automations = "python -m unittest tests/test_phase5_automations.py"
 pipeline = "python -m src.main"
 

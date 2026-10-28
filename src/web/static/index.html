@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solix FactLens - Workflow Fact Engine</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- Header & Status Bar -->
+    <header class="app-header">
+      <div class="brand-section">
+        <span class="brand-logo-badge">FACT ENGINE</span>
+        <div>
+          <h1 class="brand-title">Solix FactLens</h1>
+          <p class="brand-sub">Permissive, On-Demand Workflow Intelligence</p>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <div class="session-selector-wrap">
+          <label for="session-select" class="session-selector-label">Session:</label>
+          <select id="session-select" class="session-select" aria-label="Select Workflow Session">
+            <option value="solix_demo_test">solix_demo_test</option>
+          </select>
+        </div>
+
+        <button id="btn-export-json" class="action-btn" title="Export Session Facts as JSON">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Export Facts
+        </button>
+
+        <button id="btn-download-all" class="action-btn primary" title="Download all Python automation scripts">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+          </svg>
+          Automation Package
+        </button>
+      </div>
+    </header>
+
+    <!-- KPI Summary Row -->
+    <section class="kpi-bar" aria-label="Key Performance Indicators">
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>Session Duration</span>
+          <span id="kpi-frames-count" class="fact-badge badge-neutral">56 Frames</span>
+        </div>
+        <div id="kpi-duration" class="kpi-value">56.0s</div>
+        <div class="kpi-desc">Synchronized 1-FPS Keyframes Ingested</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>Friction Impact</span>
+          <span class="fact-badge badge-amber">Identified</span>
+        </div>
+        <div id="kpi-friction-pct" class="kpi-value" style="color: var(--accent-amber);">37.5%</div>
+        <div id="kpi-friction-desc" class="kpi-desc">21.0s lost to context switching & overhead</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>Process Steps</span>
+          <span id="kpi-apps-count" class="fact-badge badge-cyan">3 Apps</span>
+        </div>
+        <div id="kpi-steps-count" class="kpi-value" style="color: var(--accent-cyan);">8 Steps</div>
+        <div id="kpi-apps-list" class="kpi-desc">OBS Studio, Chrome, VS Code</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>Automations Ready</span>
+          <span class="fact-badge badge-purple">Verified</span>
+        </div>
+        <div id="kpi-automations-count" class="kpi-value" style="color: var(--accent-purple);">3 Scripts</div>
+        <div class="kpi-desc">Production Python Blueprints Available</div>
+      </div>
+    </section>
+
+    <!-- Fact Request Omnibar -->
+    <section class="omnibar-card" aria-label="Fact Request Omnibar">
+      <div class="omnibar-input-row">
+        <svg class="omnibar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input 
+          type="text" 
+          id="omnibar-input" 
+          class="omnibar-input" 
+          placeholder="Ask a question or request a fact... e.g. 'Where is friction?', 'Show OBS script', 'What happened at 25s?'" 
+          autocomplete="off"
+          spellcheck="false"
+          aria-label="Request facts from the workflow"
+        />
+        <span class="omnibar-shortcut-hint">/ or Ctrl+K</span>
+      </div>
+
+      <!-- Quick-Fact Chips -->
+      <div class="chips-row">
+        <span class="chips-label">Quick Requests:</span>
+        <button class="chip-btn active" data-query="" data-key="0">All Overview</button>
+        <button class="chip-btn" data-query="friction" data-key="1">Top Bottlenecks</button>
+        <button class="chip-btn" data-query="automation" data-key="2">Ready Automations</button>
+        <button class="chip-btn" data-query="flow" data-key="3">Process Flow</button>
+        <button class="chip-btn" data-query="time" data-key="4">Time Breakdown</button>
+        <button class="chip-btn" data-query="obs">OBS Setup</button>
+        <button class="chip-btn" data-query="code">VS Code & JSON</button>
+      </div>
+    </section>
+
+    <!-- Main Content Split Grid -->
+    <main class="main-grid">
+
+      <!-- Left: Fact Transaction Stream -->
+      <section class="fact-stream-panel" aria-label="Fact Transaction Stream">
+        <div class="panel-header-row">
+          <h2 class="panel-title">Fact Transactions</h2>
+          <span id="fact-count" class="panel-counter">0 Results</span>
+        </div>
+
+        <div id="fact-stream-container" class="fact-stream-container" role="region" aria-live="polite">
+          <!-- Dynamically populated fact cards -->
+        </div>
+      </section>
+
+      <!-- Right: Verified Proof & Code Inspector -->
+      <aside class="inspector-panel" aria-label="Verified Proof and Code Inspector">
+
+        <!-- Evidence Keyframe Preview -->
+        <div class="inspector-card">
+          <div class="inspector-title">
+            <span>Verified Keyframe Evidence</span>
+            <span id="inspector-timestamp-badge" class="fact-badge badge-cyan">00:00</span>
+          </div>
+
+          <div class="keyframe-box">
+            <img id="inspector-img" class="keyframe-img" src="" alt="Session video keyframe evidence" />
+            <div id="keyframe-fallback" class="keyframe-placeholder" style="display: none;">
+              No frame image available
+            </div>
+          </div>
+
+          <div class="evidence-meta-grid">
+            <div class="meta-field">
+              <div class="meta-field-label">Active Application</div>
+              <div id="inspector-app" class="meta-field-val">OBS Studio</div>
+            </div>
+            <div class="meta-field">
+              <div class="meta-field-label">Window Title</div>
+              <div id="inspector-window" class="meta-field-val" title="">OBS 30.0.2</div>
+            </div>
+            <div class="meta-field" style="grid-column: span 2;">
+              <div class="meta-field-label">Observed Interaction</div>
+              <div id="inspector-action" class="meta-field-val" title="">Configuring audio levels</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Code Inspector Drawer -->
+        <div class="inspector-card">
+          <div class="inspector-title">
+            <span>Automation Asset Inspector</span>
+            <span id="script-target-badge" class="fact-badge badge-purple">Python Script</span>
+          </div>
+
+          <div class="code-block-wrap">
+            <div class="code-header-bar">
+              <span id="script-filename">auto_recording_daemon.py</span>
+              <button id="btn-copy-code" class="action-btn" title="Copy code to clipboard">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                Copy Code
+              </button>
+            </div>
+            <pre class="code-body"><code id="inspector-code"># Select an automation fact to view the full production script</code></pre>
+          </div>
+        </div>
+
+      </aside>
+
+    </main>
+
+    <!-- Timeline Scrubber Bar -->
+    <section class="scrubber-card" aria-label="Interactive Timeline Scrubber">
+      <div class="scrubber-header">
+        <div class="scrubber-info">
+          <span id="scrubber-time" class="scrubber-timer">00:00 / 00:56</span>
+          <span id="scrubber-task" class="scrubber-task-name">Task 1: OBS Studio Setup & Audio Calibration</span>
+        </div>
+        <div class="scrubber-labels">
+          <span>Hotkeys: [/] Search | [Esc] Clear | [&larr;/&rarr;] Step Frame | [1-4] Quick Requests</span>
+        </div>
+      </div>
+
+      <div class="scrubber-track-wrap">
+        <input 
+          type="range" 
+          id="scrubber-range" 
+          class="scrubber-slider" 
+          min="0" 
+          max="55" 
+          value="0" 
+          aria-label="Timeline position slider in seconds"
+        />
+        <div class="scrubber-labels">
+          <span>0s (Start)</span>
+          <span>15s</span>
+          <span>30s</span>
+          <span>45s</span>
+          <span id="scrubber-max-label">56s (End)</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast" role="status" aria-live="polite">Fact copied to clipboard</div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+

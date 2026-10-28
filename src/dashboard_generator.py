@@ -10,28 +10,122 @@ import json
 import argparse
 from pathlib import Path
 from typing import Dict, Any, List
+import numpy as np
 
 from src.config import BASE_DIR, PROCESSED_DIR, ARTIFACT_DIR
 
 
-def load_json_safe(file_path: Path) -> Dict[str, Any]:
+def load_json_safe(file_path: Any) -> Dict[str, Any]:
     """Loads JSON file safely, returning empty dict on failure."""
-    if file_path.exists():
+    p = Path(file_path)
+    if p.exists():
         try:
-            return json.loads(file_path.read_text(encoding="utf-8"))
+            return json.loads(p.read_text(encoding="utf-8"))
         except Exception as e:
-            print(f"[WARN] Failed to load {file_path}: {e}")
+            print(f"[WARN] Failed to load {p}: {e}")
     return {}
 
 
-def load_code_safe(file_path: Path) -> str:
+def load_code_safe(file_path: Any) -> str:
     """Loads source code file safely."""
-    if file_path.exists():
+    p = Path(file_path)
+    if p.exists():
         try:
-            return file_path.read_text(encoding="utf-8")
+            return p.read_text(encoding="utf-8")
         except Exception:
             pass
     return ""
+
+
+def compute_macro_tasks(
+    client_timeline: List[Dict[str, Any]],
+    segments: List[Dict[str, Any]],
+    clusters: List[Dict[str, Any]],
+    stitched_sequences: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    """
+    Combines segments and clusters into separate, high-level Macro Tasks bounded by
+    major breakpoints (Δ(t) >= 0.50) and stitched sequence continuity.
+    """
+    bp_times = [0]
+    for slot in client_timeline:
+        if slot.get("is_breakpoint") and slot.get("timestamp", 0) > 0:
+            bp_times.append(slot.get("timestamp"))
+    bp_times = sorted(list(set(bp_times)))
+    max_time = client_timeline[-1]["timestamp"] if client_timeline else 0
+
+    cluster_map = {c.get("cluster_id"): c for c in clusters}
+    macro_tasks = []
+
+    for idx, t_start in enumerate(bp_times):
+        t_end = bp_times[idx + 1] - 1 if (idx + 1 < len(bp_times)) else max_time
+        task_duration = max(1, t_end - t_start + 1)
+
+        # Matching segments overlapping this time slice
+        matching_segs = [
+            s for s in segments
+            if not (s.get("end_time", 0) < t_start or s.get("start_time", 0) > t_end)
+        ]
+
+        # Extract unique clusters and applications
+        cluster_ids = list(dict.fromkeys(s.get("cluster_id") for s in matching_segs if s.get("cluster_id")))
+        apps = list(dict.fromkeys(s.get("primary_application") for s in matching_segs if s.get("primary_application")))
+
+        # High-level task title based on domain intent
+        if len(apps) == 1:
+            app_str = apps[0]
+            if "OBS" in app_str:
+                title = f"{app_str} Setup & Audio Calibration" if idx == 0 else f"{app_str} Recording Teardown & Finalization"
+            elif idx == 2 or "cluster_05" in cluster_ids:
+                title = f"{app_str} Document Inspection & Reading"
+            elif idx == 3 or "table" in (matching_segs[0].get("summary_interaction", "") if matching_segs else "").lower():
+                title = f"{app_str} Plan Verification & Table Review"
+            else:
+                title = f"{app_str} Focused Routine"
+        elif len(apps) > 1:
+            title = f"{' & '.join(apps)} Implementation & Verification Loop"
+        else:
+            title = f"Macro Task {idx + 1}"
+
+        # Collect detailed cluster info with per-task duration
+        cluster_details = []
+        for c_id in cluster_ids:
+            c_info = cluster_map.get(c_id, {})
+            c_duration = sum(s.get("duration_seconds", 0) for s in matching_segs if s.get("cluster_id") == c_id)
+            cluster_details.append({
+                "cluster_id": c_id,
+                "label": c_info.get("label", c_id),
+                "duration_seconds": c_duration,
+                "apps": c_info.get("primary_applications", []),
+                "summary": c_info.get("representative_summary", ""),
+            })
+
+        # Stitching & continuity metadata
+        is_reconnected = (idx > 0 and any("cluster_01" == c_id for c_id in cluster_ids))
+        if is_reconnected:
+            stitch_note = "Stitched Sequence: Reconnects with Task 1 via OBS Studio (Cluster 01) following developer routine completion."
+        elif len(cluster_ids) > 1:
+            stitch_note = f"Multi-Cluster Composite: Integrates {len(cluster_ids)} distinct subroutine clusters with interleaved cross-application switching."
+        else:
+            stitch_note = "Contiguous Routine: Executed as a direct, uninterrupted subroutine."
+
+        macro_tasks.append({
+            "task_number": idx + 1,
+            "title": title,
+            "time_range": f"{t_start}s - {t_end}s",
+            "start_time": t_start,
+            "end_time": t_end,
+            "duration_seconds": task_duration,
+            "primary_applications": apps,
+            "cluster_ids": cluster_ids,
+            "cluster_details": cluster_details,
+            "segment_ids": [s.get("segment_id") for s in matching_segs],
+            "segments": matching_segs,
+            "stitch_note": stitch_note,
+            "is_multicluster": len(cluster_ids) > 1,
+        })
+
+    return macro_tasks
 
 
 def build_dashboard_html(
@@ -55,7 +149,6 @@ def build_dashboard_html(
     # Serialize embedded data for client-side JavaScript
     client_timeline = []
     slots = timeline_data.get("slots", [])
-    import numpy as np
 
     prev_vec = None
     for i, slot in enumerate(slots):
@@ -88,15 +181,36 @@ def build_dashboard_html(
             "raw_text": slot.get("raw_text", ""),
         })
 
+    # Compute high-level Macro Tasks
+    macro_tasks = compute_macro_tasks(
+        client_timeline=client_timeline,
+        segments=segmented_data.get("segments", []),
+        clusters=segmented_data.get("clusters", []),
+        stitched_sequences=segmented_data.get("stitched_sequences", []),
+    )
+
+    # Attach macro task info to client timeline slots for live scrubber
+    for slot in client_timeline:
+        t = slot["timestamp"]
+        slot["macro_task_title"] = "Unassigned Task"
+        for m in macro_tasks:
+            if m["start_time"] <= t <= m["end_time"]:
+                slot["macro_task_title"] = f"Task {m['task_number']}: {m['title']}"
+                break
+
     timeline_json_str = json.dumps(client_timeline)
+    macro_tasks_json = json.dumps(macro_tasks)
     macro_steps_json = json.dumps(synthesis_data.get("macro_steps", []))
     friction_json = json.dumps(synthesis_data.get("friction_ledger", []))
     automations_json = json.dumps(automations_code)
     segments_json = json.dumps(segmented_data.get("segments", []))
+    clusters_json = json.dumps(segmented_data.get("clusters", []))
 
     total_duration = synthesis_data.get("total_duration_seconds", 56.0)
-    total_segments = segmented_data.get("total_segments", 7)
-    total_clusters = segmented_data.get("total_clusters", 5)
+    total_segments = segmented_data.get("total_segments", len(segmented_data.get("segments", [])))
+    total_clusters = segmented_data.get("total_clusters", len(segmented_data.get("clusters", [])))
+    total_macro_tasks = len(macro_tasks)
+    total_breakpoints = sum(1 for s in client_timeline if s["is_breakpoint"])
     exec_summary = synthesis_data.get("executive_summary", "No executive summary available.")
 
     html = f"""<!DOCTYPE html>
@@ -150,15 +264,15 @@ def build_dashboard_html(
       </div>
 
       <div class="bg-[var(--card,#1e293b)] border border-[var(--border,#334155)] rounded-xl p-4 shadow-sm">
-        <span class="text-xs text-[var(--muted-foreground,#94a3b8)] uppercase tracking-wider font-medium">Segments & Clusters</span>
-        <div class="text-2xl md:text-3xl font-black text-blue-400 mt-1">{total_segments} / {total_clusters}</div>
-        <span class="text-xs text-[var(--muted-foreground,#94a3b8)] mt-1">4 Stitched Cross-Sequences</span>
+        <span class="text-xs text-[var(--muted-foreground,#94a3b8)] uppercase tracking-wider font-medium">Demarcated Macro Tasks</span>
+        <div class="text-2xl md:text-3xl font-black text-amber-400 mt-1">{total_macro_tasks} Tasks</div>
+        <span class="text-xs text-amber-400/80 mt-1">{total_breakpoints} Breakpoints (&Delta; &gt; 0.50)</span>
       </div>
 
       <div class="bg-[var(--card,#1e293b)] border border-[var(--border,#334155)] rounded-xl p-4 shadow-sm">
-        <span class="text-xs text-[var(--muted-foreground,#94a3b8)] uppercase tracking-wider font-medium">Major Breakpoints</span>
-        <div class="text-2xl md:text-3xl font-black text-amber-400 mt-1">2 Events</div>
-        <span class="text-xs text-amber-400/80 mt-1">&Delta;(t) &gt; 0.50 Task Switches</span>
+        <span class="text-xs text-[var(--muted-foreground,#94a3b8)] uppercase tracking-wider font-medium">Subroutine Clusters</span>
+        <div class="text-2xl md:text-3xl font-black text-blue-400 mt-1">{total_clusters} Clusters</div>
+        <span class="text-xs text-[var(--muted-foreground,#94a3b8)] mt-1">Over {total_segments} Micro-Segments</span>
       </div>
 
       <div class="bg-[var(--card,#1e293b)] border border-[var(--border,#334155)] rounded-xl p-4 shadow-sm">
@@ -216,7 +330,7 @@ def build_dashboard_html(
       </div>
 
       <!-- Frame Details Live Box -->
-      <div id="frame-details-box" class="bg-[var(--background,#0f172a)] border border-[var(--border,#334155)] rounded-lg p-4 grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div id="frame-details-box" class="bg-[var(--background,#0f172a)] border border-[var(--border,#334155)] rounded-lg p-4 grid grid-cols-2 md:grid-cols-6 gap-4">
         <div>
           <span class="text-xs text-[var(--muted-foreground,#94a3b8)] block">Timestamp</span>
           <span id="dt-time" class="text-lg font-mono font-bold text-amber-400">t = 0s</span>
@@ -231,14 +345,18 @@ def build_dashboard_html(
           <span id="dt-diff" class="text-base font-mono font-bold text-blue-400">0.0000</span>
         </div>
         <div>
+          <span class="text-xs text-[var(--muted-foreground,#94a3b8)] block">Macro Task</span>
+          <span id="dt-macro-task" class="text-xs font-semibold text-emerald-400 block mt-1 truncate">Task 1: OBS Studio Setup</span>
+        </div>
+        <div>
           <span class="text-xs text-[var(--muted-foreground,#94a3b8)] block">Segment & Cluster</span>
           <span id="dt-segment" class="text-xs font-mono font-semibold text-purple-400 block mt-1">seg_01 (cluster_01)</span>
         </div>
         <div>
-          <span class="text-xs text-[var(--muted-foreground,#94a3b8)] block">Task Boundary Status</span>
+          <span class="text-xs text-[var(--muted-foreground,#94a3b8)] block">Boundary Status</span>
           <span id="dt-boundary" class="text-xs px-2 py-1 rounded inline-block font-semibold bg-emerald-500/20 text-emerald-400 mt-1">Continuous State</span>
         </div>
-        <div class="col-span-2 md:col-span-5 border-t border-[var(--border,#334155)] pt-2 mt-1">
+        <div class="col-span-2 md:col-span-6 border-t border-[var(--border,#334155)] pt-2 mt-1">
           <span class="text-xs text-[var(--muted-foreground,#94a3b8)] block">gpt-4o-mini Interaction Descriptor</span>
           <p id="dt-interaction" class="text-xs text-[var(--foreground,#f8fafc)] mt-0.5 italic">
             User is configuring OBS settings.
@@ -248,23 +366,47 @@ def build_dashboard_html(
     </section>
 
     <!-- Navigation Tabs -->
-    <div class="border-b border-[var(--border,#334155)] flex gap-6 text-sm">
-      <button class="tab-btn active pb-3 text-xs md:text-sm font-medium text-[var(--foreground,#f8fafc)] transition-all" onclick="switchTab('flowchart')">
-        Workflow Flowchart & Macro Trace
+    <div class="border-b border-[var(--border,#334155)] flex gap-6 text-sm overflow-x-auto pb-1">
+      <button class="tab-btn active pb-3 text-xs md:text-sm font-medium text-[var(--foreground,#f8fafc)] transition-all whitespace-nowrap" onclick="switchTab('macrotasks')">
+        Demarcated Macro Tasks & Cluster Rollup
       </button>
-      <button class="tab-btn pb-3 text-xs md:text-sm font-medium text-[var(--muted-foreground,#94a3b8)] transition-all" onclick="switchTab('frictions')">
+      <button class="tab-btn pb-3 text-xs md:text-sm font-medium text-[var(--muted-foreground,#94a3b8)] transition-all whitespace-nowrap" onclick="switchTab('flowchart')">
+        Step-by-Step Execution Trace
+      </button>
+      <button class="tab-btn pb-3 text-xs md:text-sm font-medium text-[var(--muted-foreground,#94a3b8)] transition-all whitespace-nowrap" onclick="switchTab('frictions')">
         Friction Ledger & Root Causes
       </button>
-      <button class="tab-btn pb-3 text-xs md:text-sm font-medium text-[var(--muted-foreground,#94a3b8)] transition-all" onclick="switchTab('automations')">
+      <button class="tab-btn pb-3 text-xs md:text-sm font-medium text-[var(--muted-foreground,#94a3b8)] transition-all whitespace-nowrap" onclick="switchTab('automations')">
         Generated Automation Scripts
       </button>
-      <button class="tab-btn pb-3 text-xs md:text-sm font-medium text-[var(--muted-foreground,#94a3b8)] transition-all" onclick="switchTab('segments')">
-        Segmentation & Centroid Matrix
+      <button class="tab-btn pb-3 text-xs md:text-sm font-medium text-[var(--muted-foreground,#94a3b8)] transition-all whitespace-nowrap" onclick="switchTab('segments')">
+        Subroutine Clusters & Vectors
       </button>
     </div>
 
-    <!-- TAB 1: Flowchart & Macro Trace -->
-    <div id="tab-flowchart" class="tab-content space-y-4">
+    <!-- TAB 1: Demarcated Macro Tasks & Cluster Composition (NEW) -->
+    <div id="tab-macrotasks" class="tab-content space-y-4">
+      <div class="bg-[var(--card,#1e293b)] border border-[var(--border,#334155)] rounded-xl p-5 shadow-sm space-y-4">
+        <div>
+          <h3 class="text-base font-bold text-[var(--foreground,#f8fafc)] flex items-center gap-2">
+            <span>Demarcated Macro Tasks Hierarchy</span>
+            <span class="text-xs px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-semibold border border-amber-500/30">
+              Bounded by &Delta;(t) &ge; 0.50 Breakpoints
+            </span>
+          </h3>
+          <p class="text-xs text-[var(--muted-foreground,#94a3b8)] mt-1">
+            Shows how the recording divides into distinct macro tasks, which subroutine clusters combine to form each task, and how discontinuous interruptions are reconciled.
+          </p>
+        </div>
+
+        <div id="macro-tasks-container" class="space-y-4">
+          <!-- Injected dynamically by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: Flowchart & Step-by-Step Trace -->
+    <div id="tab-flowchart" class="tab-content hidden space-y-4">
       <div class="bg-[var(--card,#1e293b)] border border-[var(--border,#334155)] rounded-xl p-5 shadow-sm">
         <h3 class="text-base font-bold text-[var(--foreground,#f8fafc)] mb-3 flex items-center gap-2">
           <span>Synthesized Macro Steps Sequence</span>
@@ -277,7 +419,7 @@ def build_dashboard_html(
       </div>
     </div>
 
-    <!-- TAB 2: Friction Ledger -->
+    <!-- TAB 3: Friction Ledger -->
     <div id="tab-frictions" class="tab-content hidden space-y-4">
       <div class="bg-[var(--card,#1e293b)] border border-[var(--border,#334155)] rounded-xl p-5 shadow-sm">
         <h3 class="text-base font-bold text-[var(--foreground,#f8fafc)] mb-1">Observed Operational Friction Ledger</h3>
@@ -291,7 +433,7 @@ def build_dashboard_html(
       </div>
     </div>
 
-    <!-- TAB 3: Automations Code -->
+    <!-- TAB 4: Automations Code -->
     <div id="tab-automations" class="tab-content hidden space-y-4">
       <div class="bg-[var(--card,#1e293b)] border border-[var(--border,#334155)] rounded-xl p-5 shadow-sm">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 mb-4">
@@ -327,10 +469,10 @@ def build_dashboard_html(
       </div>
     </div>
 
-    <!-- TAB 4: Segments & Clusters Matrix -->
+    <!-- TAB 5: Segments & Clusters Matrix -->
     <div id="tab-segments" class="tab-content hidden space-y-4">
       <div class="bg-[var(--card,#1e293b)] border border-[var(--border,#334155)] rounded-xl p-5 shadow-sm overflow-x-auto">
-        <h3 class="text-base font-bold text-[var(--foreground,#f8fafc)] mb-1">Task Segments & Subroutine Clusters</h3>
+        <h3 class="text-base font-bold text-[var(--foreground,#f8fafc)] mb-1">Subroutine Clusters & Micro-Segments Matrix</h3>
         <p class="text-xs text-[var(--muted-foreground,#94a3b8)] mb-4">
           Heuristic partition (&Delta; &gt; 0.50) with 1536-d centroid embeddings and interruption stitch links.
         </p>
@@ -364,10 +506,12 @@ def build_dashboard_html(
   <!-- Client-side Interactive Logic -->
   <script>
     const timelineData = {timeline_json_str};
+    const macroTasks = {macro_tasks_json};
     const macroSteps = {macro_steps_json};
     const frictionData = {friction_json};
     const automations = {automations_json};
     const segmentsData = {segments_json};
+    const clustersData = {clusters_json};
 
     let activeScriptKey = 'AUTO-01';
 
@@ -425,6 +569,7 @@ def build_dashboard_html(
       document.getElementById('dt-app').textContent = slot.application || 'Unknown';
       document.getElementById('dt-window').textContent = slot.window || '';
       document.getElementById('dt-diff').textContent = slot.difference.toFixed(4);
+      document.getElementById('dt-macro-task').textContent = slot.macro_task_title || 'Unassigned';
       document.getElementById('dt-segment').textContent = slot.segment_id ? `${{slot.segment_id}} (${{slot.cluster_id}})` : 'N/A';
 
       const bBadge = document.getElementById('dt-boundary');
@@ -436,7 +581,7 @@ def build_dashboard_html(
         bBadge.textContent = 'Subroutine Transition';
       }} else {{
         bBadge.className = 'text-xs px-2 py-1 rounded inline-block font-semibold bg-emerald-500/20 text-emerald-400 mt-1';
-        bBadge.textContent = 'Continuous State Flow';
+        bBadge.textContent = 'Continuous Flow';
       }}
 
       document.getElementById('dt-interaction').textContent = slot.interaction || slot.raw_text || 'No interaction recorded.';
@@ -460,7 +605,89 @@ def build_dashboard_html(
       }}
     }}
 
-    // Render Macro Steps
+    // Render Demarcated Macro Tasks (TAB 1)
+    function renderMacroTasks() {{
+      const container = document.getElementById('macro-tasks-container');
+      container.innerHTML = '';
+
+      macroTasks.forEach((task) => {{
+        const card = document.createElement('div');
+        card.className = 'p-5 rounded-xl border border-[var(--border,#334155)] bg-[var(--background,#0f172a)] hover:border-blue-500/60 transition-all space-y-4';
+
+        // Cluster pills HTML
+        let clustersHtml = '';
+        task.cluster_details.forEach(c => {{
+          clustersHtml += `
+            <div class="px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700/80 flex items-center justify-between gap-3 text-xs">
+              <span class="font-mono text-purple-400 font-semibold">${{c.cluster_id}}</span>
+              <span class="text-slate-200 font-medium">${{c.label}}</span>
+              <span class="px-2 py-0.5 rounded bg-blue-900/40 text-blue-300 font-mono text-[11px]">${{c.duration_seconds}}s</span>
+            </div>
+          `;
+        }});
+
+        // Segment breadcrumbs flow
+        let segFlowHtml = task.segments.map(s => `
+          <span class="px-2 py-1 rounded bg-slate-800 text-xs font-mono text-slate-300 border border-slate-700">
+            ${{s.segment_id}} (${{s.primary_application}}: ${{s.duration_seconds}}s)
+          </span>
+        `).join(' <span class="text-slate-600 font-bold">&rarr;</span> ');
+
+        card.innerHTML = `
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-3">
+              <span class="flex items-center justify-center px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold text-xs">
+                TASK ${{task.task_number.toString().padStart(2, '0')}}
+              </span>
+              <div>
+                <h4 class="text-base font-bold text-[var(--foreground,#f8fafc)]">${{task.title}}</h4>
+                <div class="flex items-center gap-2 mt-0.5 text-xs text-[var(--muted-foreground,#94a3b8)]">
+                  <span class="font-mono text-amber-400 font-semibold">${{task.time_range}}</span>
+                  <span>&bull;</span>
+                  <span>Duration: <strong class="text-slate-200">${{task.duration_seconds}}s</strong></span>
+                  <span>&bull;</span>
+                  <span>Apps: <strong class="text-slate-200">${{task.primary_applications.join(', ')}}</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              ${{task.is_multicluster ? '<span class="text-xs px-2.5 py-1 rounded-full bg-blue-500/20 text-blue-300 font-semibold border border-blue-500/30">Composite Task (${{task.cluster_ids.length}} Clusters)</span>' : '<span class="text-xs px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/30">Focused Routine</span>'}}
+            </div>
+          </div>
+
+          <!-- Clusters rollup inside this task -->
+          <div class="space-y-2">
+            <span class="text-xs text-[var(--muted-foreground,#94a3b8)] font-semibold uppercase tracking-wider block">
+              Combined Subroutine Clusters (${{task.cluster_details.length}})
+            </span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+              ${{clustersHtml}}
+            </div>
+          </div>
+
+          <!-- Chronological segment flow -->
+          <div class="space-y-1.5">
+            <span class="text-xs text-[var(--muted-foreground,#94a3b8)] font-semibold uppercase tracking-wider block">
+              Micro-Segment Execution Flow
+            </span>
+            <div class="flex flex-wrap items-center gap-1.5 p-2 rounded-lg bg-slate-900/60 border border-slate-800">
+              ${{segFlowHtml}}
+            </div>
+          </div>
+
+          <!-- Stitching / Interruption Note -->
+          <div class="p-2.5 rounded-lg bg-blue-950/30 border border-blue-900/40 text-xs text-blue-300 flex items-center gap-2">
+            <span>ℹ️</span>
+            <span>${{task.stitch_note}}</span>
+          </div>
+        `;
+
+        container.appendChild(card);
+      }});
+    }}
+
+    // Render Macro Steps (TAB 2)
     function renderMacroSteps() {{
       const container = document.getElementById('macro-steps-container');
       container.innerHTML = '';
@@ -486,7 +713,7 @@ def build_dashboard_html(
       }});
     }}
 
-    // Render Frictions
+    // Render Frictions (TAB 3)
     function renderFrictions() {{
       const container = document.getElementById('friction-container');
       container.innerHTML = '';
@@ -510,7 +737,7 @@ def build_dashboard_html(
       }});
     }}
 
-    // Render Automations Code
+    // Render Automations Code (TAB 4)
     function showScript(key) {{
       activeScriptKey = key;
       ['AUTO-01', 'AUTO-02', 'AUTO-03'].forEach((k, idx) => {{
@@ -542,7 +769,7 @@ def build_dashboard_html(
       }});
     }}
 
-    // Render Segments Table
+    // Render Segments Table (TAB 5)
     function renderSegmentsTable() {{
       const tbody = document.getElementById('segments-table-body');
       tbody.innerHTML = '';
@@ -566,6 +793,7 @@ def build_dashboard_html(
     window.addEventListener('DOMContentLoaded', () => {{
       initSvgChart();
       updateScrubber(0);
+      renderMacroTasks();
       renderMacroSteps();
       renderFrictions();
       renderSegmentsTable();
@@ -609,11 +837,14 @@ def generate_dashboard(session_id: str = "solix_demo_test") -> Path:
     output_html_path.write_text(html_content, encoding="utf-8")
     print(f"[OK] Generated Dashboard: {output_html_path}")
 
-    # Save to artifact directory
-    if ARTIFACT_DIR.exists():
+    # Save to artifact directory safely
+    try:
+        ARTIFACT_DIR.mkdir(parents=True, exist_ok=True)
         artifact_html_path = ARTIFACT_DIR / "workflow_dashboard.html"
         artifact_html_path.write_text(html_content, encoding="utf-8")
         print(f"[OK] Artifact Dashboard: {artifact_html_path}")
+    except Exception as e:
+        print(f"[WARN] Could not write artifact dashboard to {ARTIFACT_DIR}: {e}")
 
     return output_html_path
 

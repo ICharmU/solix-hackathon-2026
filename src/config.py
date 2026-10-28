@@ -15,7 +15,11 @@ DATA_DIR = BASE_DIR / "data"
 FRAMES_DIR = DATA_DIR / "frames"
 AUDIO_DIR = DATA_DIR / "audio"
 PROCESSED_DIR = DATA_DIR / "processed"
-ARTIFACT_DIR = Path(os.getenv("ARTIFACT_DIR", r"C:\Users\seani\.gemini\antigravity\brain\4e790650-7d9f-43b7-a1ba-18320df80d5f"))
+# Artifact directory: defaults to local data/artifacts if env var not set or invalid
+_default_artifact = str(BASE_DIR / "data" / "artifacts")
+ARTIFACT_DIR = Path(os.getenv("ARTIFACT_DIR", _default_artifact))
+if not ARTIFACT_DIR.is_absolute():
+    ARTIFACT_DIR = BASE_DIR / ARTIFACT_DIR
 
 # Ensure directories exist
 for directory in (DATA_DIR, FRAMES_DIR, AUDIO_DIR, PROCESSED_DIR):
