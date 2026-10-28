@@ -4,6 +4,24 @@ name = "solix-hackathon-2026"
 platforms = ["win-64"]
 version = "0.1.0"
 
+[environments]
+default = []
+cuda = { features = ["cuda"], no-default-feature = true }
+
+[feature.cuda]
+channels = ["conda-forge"]
+platforms = ["win-64"]
+
+[feature.cuda.dependencies]
+python = "3.11.*"
+pytorch = "2.11.0"
+numpy = "*"
+pydantic = ">=2.0"
+matplotlib = "*"
+
+[feature.cuda.tasks]
+test-cuda = "python -c \"import torch; print('PyTorch:', torch.__version__, 'CUDA available:', torch.cuda.is_available())\""
+
 [tasks]
 test-connection = "python test_connection.py"
 test-preprocess = "python -m unittest tests/test_preprocess.py"
@@ -28,3 +46,4 @@ pillow = ">=13.0.0,<14"
 pydantic = ">=2.14.1,<3"
 numpy = ">=2.5.4,<3"
 matplotlib = ">=3.11.2,<4"
+tiktoken = ">=0.14.0,<0.15"

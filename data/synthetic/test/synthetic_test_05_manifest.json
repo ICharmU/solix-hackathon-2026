@@ -1,0 +1,146 @@
+{
+  "synthetic_id": "synthetic_test_05",
+  "split": "test",
+  "total_duration_seconds": 600.0,
+  "source_snippet_count": 5,
+  "total_segments": 6,
+  "total_breakpoints": 5,
+  "breakpoints": [
+    60.0,
+    180.0,
+    240.0,
+    360.0,
+    480.0
+  ],
+  "source_snippets": [
+    {
+      "snippet_index": 1,
+      "category": "salesforce",
+      "source_video_id": "data/salesforce/_qYtEt3ruIs.mp4",
+      "start_offset_s": 19.0,
+      "full_duration_s": 120.0
+    },
+    {
+      "snippet_index": 2,
+      "category": "photoshop",
+      "source_video_id": "data/photoshop/BdlM4JIz_sQ.mp4",
+      "start_offset_s": 12.0,
+      "full_duration_s": 120.0
+    },
+    {
+      "snippet_index": 3,
+      "category": "excel",
+      "source_video_id": "data/excel/MCN2Zx3Cp4I.mp4",
+      "start_offset_s": 60.0,
+      "full_duration_s": 120.0
+    },
+    {
+      "snippet_index": 4,
+      "category": "autocad",
+      "source_video_id": "data/autocad/_fSgqZnqWPw.mp4",
+      "start_offset_s": 23.0,
+      "full_duration_s": 120.0
+    },
+    {
+      "snippet_index": 5,
+      "category": "vscode",
+      "source_video_id": "data/vscode/Pa509XvQ2zo.mp4",
+      "start_offset_s": 52.0,
+      "full_duration_s": 120.0
+    }
+  ],
+  "segments": [
+    {
+      "segment_id": "seg_01",
+      "segment_index": 1,
+      "source_snippet_index": 2,
+      "source_video_id": "data/photoshop/BdlM4JIz_sQ.mp4",
+      "category": "photoshop",
+      "part": "first_half",
+      "start_time_s": 0.0,
+      "end_time_s": 60.0,
+      "duration_s": 60.0,
+      "is_interruption": false,
+      "interrupted_by_snippets": [],
+      "resumes_segment_id": null,
+      "resumed_in_segment_id": "seg_03"
+    },
+    {
+      "segment_id": "seg_02",
+      "segment_index": 2,
+      "source_snippet_index": 1,
+      "source_video_id": "data/salesforce/_qYtEt3ruIs.mp4",
+      "category": "salesforce",
+      "part": "full",
+      "start_time_s": 60.0,
+      "end_time_s": 180.0,
+      "duration_s": 120.0,
+      "is_interruption": true,
+      "interrupted_by_snippets": [
+        2
+      ],
+      "resumes_segment_id": null,
+      "resumed_in_segment_id": null
+    },
+    {
+      "segment_id": "seg_03",
+      "segment_index": 3,
+      "source_snippet_index": 2,
+      "source_video_id": "data/photoshop/BdlM4JIz_sQ.mp4",
+      "category": "photoshop",
+      "part": "second_half",
+      "start_time_s": 180.0,
+      "end_time_s": 240.0,
+      "duration_s": 60.0,
+      "is_interruption": false,
+      "interrupted_by_snippets": [],
+      "resumes_segment_id": "seg_01",
+      "resumed_in_segment_id": null
+    },
+    {
+      "segment_id": "seg_04",
+      "segment_index": 4,
+      "source_snippet_index": 3,
+      "source_video_id": "data/excel/MCN2Zx3Cp4I.mp4",
+      "category": "excel",
+      "part": "full",
+      "start_time_s": 240.0,
+      "end_time_s": 360.0,
+      "duration_s": 120.0,
+      "is_interruption": false,
+      "interrupted_by_snippets": [],
+      "resumes_segment_id": null,
+      "resumed_in_segment_id": null
+    },
+    {
+      "segment_id": "seg_05",
+      "segment_index": 5,
+      "source_snippet_index": 4,
+      "source_video_id": "data/autocad/_fSgqZnqWPw.mp4",
+      "category": "autocad",
+      "part": "full",
+      "start_time_s": 360.0,
+      "end_time_s": 480.0,
+      "duration_s": 120.0,
+      "is_interruption": false,
+      "interrupted_by_snippets": [],
+      "resumes_segment_id": null,
+      "resumed_in_segment_id": null
+    },
+    {
+      "segment_id": "seg_06",
+      "segment_index": 6,
+      "source_snippet_index": 5,
+      "source_video_id": "data/vscode/Pa509XvQ2zo.mp4",
+      "category": "vscode",
+      "part": "full",
+      "start_time_s": 480.0,
+      "end_time_s": 600.0,
+      "duration_s": 120.0,
+      "is_interruption": false,
+      "interrupted_by_snippets": [],
+      "resumes_segment_id": null,
+      "resumed_in_segment_id": null
+    }
+  ]
+}

@@ -1,0 +1,193 @@
+{
+  "synthetic_id": "synthetic_val_03",
+  "split": "val",
+  "total_duration_seconds": 600.0,
+  "source_snippet_count": 5,
+  "total_segments": 8,
+  "total_breakpoints": 7,
+  "breakpoints": [
+    60.0,
+    120.0,
+    180.0,
+    300.0,
+    360.0,
+    480.0,
+    540.0
+  ],
+  "source_snippets": [
+    {
+      "snippet_index": 1,
+      "category": "blender",
+      "source_video_id": "data/blender/4MHCpHh0OHY.mp4",
+      "start_offset_s": 47.0,
+      "full_duration_s": 120.0
+    },
+    {
+      "snippet_index": 2,
+      "category": "vscode",
+      "source_video_id": "data/vscode/ukZR-3tZamE.mp4",
+      "start_offset_s": 13.0,
+      "full_duration_s": 120.0
+    },
+    {
+      "snippet_index": 3,
+      "category": "vscode",
+      "source_video_id": "data/vscode/XRUU39Bbiq4.mp4",
+      "start_offset_s": 13.0,
+      "full_duration_s": 120.0
+    },
+    {
+      "snippet_index": 4,
+      "category": "autocad",
+      "source_video_id": "data/autocad/wvqooccQzb4.mp4",
+      "start_offset_s": 40.0,
+      "full_duration_s": 120.0
+    },
+    {
+      "snippet_index": 5,
+      "category": "salesforce",
+      "source_video_id": "data/salesforce/xargkqhEGto.mp4",
+      "start_offset_s": 43.0,
+      "full_duration_s": 120.0
+    }
+  ],
+  "segments": [
+    {
+      "segment_id": "seg_01",
+      "segment_index": 1,
+      "source_snippet_index": 5,
+      "source_video_id": "data/salesforce/xargkqhEGto.mp4",
+      "category": "salesforce",
+      "part": "first_half",
+      "start_time_s": 0.0,
+      "end_time_s": 60.0,
+      "duration_s": 60.0,
+      "is_interruption": false,
+      "interrupted_by_snippets": [],
+      "resumes_segment_id": null,
+      "resumed_in_segment_id": "seg_08"
+    },
+    {
+      "segment_id": "seg_02",
+      "segment_index": 2,
+      "source_snippet_index": 4,
+      "source_video_id": "data/autocad/wvqooccQzb4.mp4",
+      "category": "autocad",
+      "part": "first_half",
+      "start_time_s": 60.0,
+      "end_time_s": 120.0,
+      "duration_s": 60.0,
+      "is_interruption": true,
+      "interrupted_by_snippets": [
+        5
+      ],
+      "resumes_segment_id": null,
+      "resumed_in_segment_id": "seg_07"
+    },
+    {
+      "segment_id": "seg_03",
+      "segment_index": 3,
+      "source_snippet_index": 2,
+      "source_video_id": "data/vscode/ukZR-3tZamE.mp4",
+      "category": "vscode",
+      "part": "first_half",
+      "start_time_s": 120.0,
+      "end_time_s": 180.0,
+      "duration_s": 60.0,
+      "is_interruption": true,
+      "interrupted_by_snippets": [
+        5,
+        4
+      ],
+      "resumes_segment_id": null,
+      "resumed_in_segment_id": "seg_05"
+    },
+    {
+      "segment_id": "seg_04",
+      "segment_index": 4,
+      "source_snippet_index": 1,
+      "source_video_id": "data/blender/4MHCpHh0OHY.mp4",
+      "category": "blender",
+      "part": "full",
+      "start_time_s": 180.0,
+      "end_time_s": 300.0,
+      "duration_s": 120.0,
+      "is_interruption": true,
+      "interrupted_by_snippets": [
+        5,
+        4,
+        2
+      ],
+      "resumes_segment_id": null,
+      "resumed_in_segment_id": null
+    },
+    {
+      "segment_id": "seg_05",
+      "segment_index": 5,
+      "source_snippet_index": 2,
+      "source_video_id": "data/vscode/ukZR-3tZamE.mp4",
+      "category": "vscode",
+      "part": "second_half",
+      "start_time_s": 300.0,
+      "end_time_s": 360.0,
+      "duration_s": 60.0,
+      "is_interruption": true,
+      "interrupted_by_snippets": [
+        5,
+        4
+      ],
+      "resumes_segment_id": "seg_03",
+      "resumed_in_segment_id": null
+    },
+    {
+      "segment_id": "seg_06",
+      "segment_index": 6,
+      "source_snippet_index": 3,
+      "source_video_id": "data/vscode/XRUU39Bbiq4.mp4",
+      "category": "vscode",
+      "part": "full",
+      "start_time_s": 360.0,
+      "end_time_s": 480.0,
+      "duration_s": 120.0,
+      "is_interruption": true,
+      "interrupted_by_snippets": [
+        5,
+        4
+      ],
+      "resumes_segment_id": null,
+      "resumed_in_segment_id": null
+    },
+    {
+      "segment_id": "seg_07",
+      "segment_index": 7,
+      "source_snippet_index": 4,
+      "source_video_id": "data/autocad/wvqooccQzb4.mp4",
+      "category": "autocad",
+      "part": "second_half",
+      "start_time_s": 480.0,
+      "end_time_s": 540.0,
+      "duration_s": 60.0,
+      "is_interruption": true,
+      "interrupted_by_snippets": [
+        5
+      ],
+      "resumes_segment_id": "seg_02",
+      "resumed_in_segment_id": null
+    },
+    {
+      "segment_id": "seg_08",
+      "segment_index": 8,
+      "source_snippet_index": 5,
+      "source_video_id": "data/salesforce/xargkqhEGto.mp4",
+      "category": "salesforce",
+      "part": "second_half",
+      "start_time_s": 540.0,
+      "end_time_s": 600.0,
+      "duration_s": 60.0,
+      "is_interruption": false,
+      "interrupted_by_snippets": [],
+      "resumes_segment_id": "seg_01",
+      "resumed_in_segment_id": null
+    }
+  ]
+}

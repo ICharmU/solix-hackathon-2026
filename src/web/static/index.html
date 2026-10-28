@@ -192,34 +192,36 @@
 
     </main>
 
-    <!-- Timeline Scrubber Bar -->
+    <!-- Timeline Scrubber Bar (Attached to bottom of screen) -->
     <section class="scrubber-card" aria-label="Interactive Timeline Scrubber">
-      <div class="scrubber-header">
-        <div class="scrubber-info">
-          <span id="scrubber-time" class="scrubber-timer">00:00 / 00:56</span>
-          <span id="scrubber-task" class="scrubber-task-name">Task 1: OBS Studio Setup & Audio Calibration</span>
+      <div class="scrubber-inner">
+        <div class="scrubber-header">
+          <div class="scrubber-info">
+            <span id="scrubber-time" class="scrubber-timer">00:00 / 00:56</span>
+            <span id="scrubber-task" class="scrubber-task-name">Task 1: OBS Studio Setup & Audio Calibration</span>
+          </div>
+          <div class="scrubber-labels">
+            <span>Hotkeys: [/] Search | [Esc] Clear | [&larr;/&rarr;] Step Frame | [1-4] Quick Requests</span>
+          </div>
         </div>
-        <div class="scrubber-labels">
-          <span>Hotkeys: [/] Search | [Esc] Clear | [&larr;/&rarr;] Step Frame | [1-4] Quick Requests</span>
-        </div>
-      </div>
 
-      <div class="scrubber-track-wrap">
-        <input 
-          type="range" 
-          id="scrubber-range" 
-          class="scrubber-slider" 
-          min="0" 
-          max="55" 
-          value="0" 
-          aria-label="Timeline position slider in seconds"
-        />
-        <div class="scrubber-labels">
-          <span>0s (Start)</span>
-          <span>15s</span>
-          <span>30s</span>
-          <span>45s</span>
-          <span id="scrubber-max-label">56s (End)</span>
+        <div class="scrubber-track-wrap">
+          <input 
+            type="range" 
+            id="scrubber-range" 
+            class="scrubber-slider" 
+            min="0" 
+            max="55" 
+            value="0" 
+            aria-label="Timeline position slider in seconds"
+          />
+          <div class="scrubber-labels">
+            <span>0s (Start)</span>
+            <span>15s</span>
+            <span>30s</span>
+            <span>45s</span>
+            <span id="scrubber-max-label">56s (End)</span>
+          </div>
         </div>
       </div>
     </section>

@@ -84,6 +84,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding-bottom: 125px; /* Ensures all content is scrollable above the fixed bottom timeline */
 }
 
 /* Header & Status Bar */
@@ -263,13 +264,27 @@ body {
   pointer-events: none;
 }
 
-/* Quick-Fact Chips Row */
+/* Quick-Fact Chips Row (Horizontally Scrollable Bar) */
 .chips-row {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-top: 12px;
-  flex-wrap: wrap;
+  overflow-x: auto;
+  white-space: nowrap;
+  flex-wrap: nowrap;
+  padding-bottom: 6px;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.chips-row::-webkit-scrollbar {
+  height: 4px;
+}
+
+.chips-row::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 2px;
 }
 
 .chips-label {
@@ -279,9 +294,11 @@ body {
   font-weight: 600;
   letter-spacing: 0.05em;
   margin-right: 4px;
+  flex-shrink: 0;
 }
 
 .chip-btn {
+  flex-shrink: 0;
   background: var(--bg-input);
   border: 1px solid var(--border-subtle);
   color: var(--text-muted);
@@ -291,6 +308,7 @@ body {
   border-radius: var(--radius-full);
   cursor: pointer;
   transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
 .chip-btn:hover {
@@ -319,11 +337,27 @@ body {
   }
 }
 
-/* Left: Fact Transaction Stream */
+/* Left: Fact Transaction Stream (Scrollable Column) */
 .fact-stream-panel {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-width: 0;
+}
+
+.fact-stream-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  max-height: calc(100vh - 360px);
+  min-height: 400px;
+  padding-right: 6px;
+  scrollbar-width: thin;
+}
+
+.fact-stream-container::-webkit-scrollbar {
+  width: 5px;
 }
 
 .panel-header-row {
@@ -465,11 +499,17 @@ body {
   color: var(--accent-cyan);
 }
 
-/* Right: Verified Proof & Code Inspector */
+/* Right: Verified Proof & Code Inspector (Sticky Viewport) */
 .inspector-panel {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  position: sticky;
+  top: 16px;
+  align-self: flex-start;
+  max-height: calc(100vh - 145px);
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .inspector-card {
@@ -580,16 +620,32 @@ body {
   white-space: pre;
 }
 
-/* Timeline Scrubber Bar */
+/* Timeline Scrubber Bar (Attached to Bottom of Screen) */
 .scrubber-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: 16px 20px;
-  box-shadow: var(--shadow-sm);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 80;
+  background: rgba(17, 24, 39, 0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border-strong);
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+  border-radius: 0;
+  padding: 10px 24px 12px 24px;
+  box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.6);
+}
+
+.scrubber-inner {
+  max-width: 1360px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
+  width: 100%;
 }
 
 .scrubber-header {

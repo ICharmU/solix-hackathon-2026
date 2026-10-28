@@ -1,0 +1,100 @@
+{
+  "synthetic_id": "synthetic_train_11",
+  "split": "train",
+  "total_duration_seconds": 360.0,
+  "source_snippet_count": 3,
+  "total_segments": 4,
+  "total_breakpoints": 3,
+  "breakpoints": [
+    60.0,
+    180.0,
+    240.0
+  ],
+  "source_snippets": [
+    {
+      "snippet_index": 1,
+      "category": "salesforce",
+      "source_video_id": "data/salesforce/LPRUDLaiiEQ.mp4",
+      "start_offset_s": 41.0,
+      "full_duration_s": 120.0
+    },
+    {
+      "snippet_index": 2,
+      "category": "autocad",
+      "source_video_id": "data/autocad/AZ11rAaqteU.mp4",
+      "start_offset_s": 33.0,
+      "full_duration_s": 120.0
+    },
+    {
+      "snippet_index": 3,
+      "category": "excel",
+      "source_video_id": "data/excel/EdvuOUkfj-4.mp4",
+      "start_offset_s": 13.0,
+      "full_duration_s": 120.0
+    }
+  ],
+  "segments": [
+    {
+      "segment_id": "seg_01",
+      "segment_index": 1,
+      "source_snippet_index": 2,
+      "source_video_id": "data/autocad/AZ11rAaqteU.mp4",
+      "category": "autocad",
+      "part": "first_half",
+      "start_time_s": 0.0,
+      "end_time_s": 60.0,
+      "duration_s": 60.0,
+      "is_interruption": false,
+      "interrupted_by_snippets": [],
+      "resumes_segment_id": null,
+      "resumed_in_segment_id": "seg_03"
+    },
+    {
+      "segment_id": "seg_02",
+      "segment_index": 2,
+      "source_snippet_index": 1,
+      "source_video_id": "data/salesforce/LPRUDLaiiEQ.mp4",
+      "category": "salesforce",
+      "part": "full",
+      "start_time_s": 60.0,
+      "end_time_s": 180.0,
+      "duration_s": 120.0,
+      "is_interruption": true,
+      "interrupted_by_snippets": [
+        2
+      ],
+      "resumes_segment_id": null,
+      "resumed_in_segment_id": null
+    },
+    {
+      "segment_id": "seg_03",
+      "segment_index": 3,
+      "source_snippet_index": 2,
+      "source_video_id": "data/autocad/AZ11rAaqteU.mp4",
+      "category": "autocad",
+      "part": "second_half",
+      "start_time_s": 180.0,
+      "end_time_s": 240.0,
+      "duration_s": 60.0,
+      "is_interruption": false,
+      "interrupted_by_snippets": [],
+      "resumes_segment_id": "seg_01",
+      "resumed_in_segment_id": null
+    },
+    {
+      "segment_id": "seg_04",
+      "segment_index": 4,
+      "source_snippet_index": 3,
+      "source_video_id": "data/excel/EdvuOUkfj-4.mp4",
+      "category": "excel",
+      "part": "full",
+      "start_time_s": 240.0,
+      "end_time_s": 360.0,
+      "duration_s": 120.0,
+      "is_interruption": false,
+      "interrupted_by_snippets": [],
+      "resumes_segment_id": null,
+      "resumed_in_segment_id": null
+    }
+  ]
+}

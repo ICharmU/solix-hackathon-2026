@@ -1,0 +1,390 @@
+{
+  "dataset_name": "solix_synthetic_task_timeline_benchmark",
+  "created_at": "2026-10-28T21:44:12Z",
+  "total_examples": 25,
+  "splits": {
+    "train": 15,
+    "val": 5,
+    "test": 5
+  },
+  "sampling_algorithm": "1/n_chance_sandwich_interruption",
+  "examples": [
+    {
+      "synthetic_id": "synthetic_train_01",
+      "split": "train",
+      "video_path": "train\\synthetic_train_01.mp4",
+      "manifest_path": "train\\synthetic_train_01_manifest.json",
+      "duration_seconds": 360.0,
+      "snippets_count": 3,
+      "segments_count": 4,
+      "breakpoints_count": 3,
+      "categories_used": [
+        "blender",
+        "autocad"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_train_02",
+      "split": "train",
+      "video_path": "train\\synthetic_train_02.mp4",
+      "manifest_path": "train\\synthetic_train_02_manifest.json",
+      "duration_seconds": 360.0,
+      "snippets_count": 3,
+      "segments_count": 4,
+      "breakpoints_count": 3,
+      "categories_used": [
+        "salesforce",
+        "blender"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_train_03",
+      "split": "train",
+      "video_path": "train\\synthetic_train_03.mp4",
+      "manifest_path": "train\\synthetic_train_03_manifest.json",
+      "duration_seconds": 600.0,
+      "snippets_count": 5,
+      "segments_count": 5,
+      "breakpoints_count": 4,
+      "categories_used": [
+        "excel",
+        "blender",
+        "photoshop",
+        "autocad"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_train_04",
+      "split": "train",
+      "video_path": "train\\synthetic_train_04.mp4",
+      "manifest_path": "train\\synthetic_train_04_manifest.json",
+      "duration_seconds": 360.0,
+      "snippets_count": 3,
+      "segments_count": 3,
+      "breakpoints_count": 2,
+      "categories_used": [
+        "salesforce",
+        "excel",
+        "photoshop"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_train_05",
+      "split": "train",
+      "video_path": "train\\synthetic_train_05.mp4",
+      "manifest_path": "train\\synthetic_train_05_manifest.json",
+      "duration_seconds": 360.0,
+      "snippets_count": 3,
+      "segments_count": 4,
+      "breakpoints_count": 3,
+      "categories_used": [
+        "vscode",
+        "excel",
+        "blender"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_train_06",
+      "split": "train",
+      "video_path": "train\\synthetic_train_06.mp4",
+      "manifest_path": "train\\synthetic_train_06_manifest.json",
+      "duration_seconds": 600.0,
+      "snippets_count": 5,
+      "segments_count": 7,
+      "breakpoints_count": 6,
+      "categories_used": [
+        "vscode",
+        "blender"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_train_07",
+      "split": "train",
+      "video_path": "train\\synthetic_train_07.mp4",
+      "manifest_path": "train\\synthetic_train_07_manifest.json",
+      "duration_seconds": 480.0,
+      "snippets_count": 4,
+      "segments_count": 5,
+      "breakpoints_count": 4,
+      "categories_used": [
+        "vscode",
+        "excel",
+        "autocad"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_train_08",
+      "split": "train",
+      "video_path": "train\\synthetic_train_08.mp4",
+      "manifest_path": "train\\synthetic_train_08_manifest.json",
+      "duration_seconds": 720.0,
+      "snippets_count": 6,
+      "segments_count": 9,
+      "breakpoints_count": 8,
+      "categories_used": [
+        "vscode",
+        "excel",
+        "photoshop"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_train_09",
+      "split": "train",
+      "video_path": "train\\synthetic_train_09.mp4",
+      "manifest_path": "train\\synthetic_train_09_manifest.json",
+      "duration_seconds": 720.0,
+      "snippets_count": 6,
+      "segments_count": 9,
+      "breakpoints_count": 8,
+      "categories_used": [
+        "vscode",
+        "salesforce",
+        "photoshop",
+        "autocad"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_train_10",
+      "split": "train",
+      "video_path": "train\\synthetic_train_10.mp4",
+      "manifest_path": "train\\synthetic_train_10_manifest.json",
+      "duration_seconds": 480.0,
+      "snippets_count": 4,
+      "segments_count": 5,
+      "breakpoints_count": 4,
+      "categories_used": [
+        "salesforce",
+        "vscode",
+        "blender"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_train_11",
+      "split": "train",
+      "video_path": "train\\synthetic_train_11.mp4",
+      "manifest_path": "train\\synthetic_train_11_manifest.json",
+      "duration_seconds": 360.0,
+      "snippets_count": 3,
+      "segments_count": 4,
+      "breakpoints_count": 3,
+      "categories_used": [
+        "salesforce",
+        "excel",
+        "autocad"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_train_12",
+      "split": "train",
+      "video_path": "train\\synthetic_train_12.mp4",
+      "manifest_path": "train\\synthetic_train_12_manifest.json",
+      "duration_seconds": 360.0,
+      "snippets_count": 3,
+      "segments_count": 4,
+      "breakpoints_count": 3,
+      "categories_used": [
+        "salesforce",
+        "blender",
+        "autocad"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_train_13",
+      "split": "train",
+      "video_path": "train\\synthetic_train_13.mp4",
+      "manifest_path": "train\\synthetic_train_13_manifest.json",
+      "duration_seconds": 720.0,
+      "snippets_count": 6,
+      "segments_count": 9,
+      "breakpoints_count": 8,
+      "categories_used": [
+        "salesforce",
+        "vscode",
+        "blender",
+        "excel"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_train_14",
+      "split": "train",
+      "video_path": "train\\synthetic_train_14.mp4",
+      "manifest_path": "train\\synthetic_train_14_manifest.json",
+      "duration_seconds": 360.0,
+      "snippets_count": 3,
+      "segments_count": 4,
+      "breakpoints_count": 3,
+      "categories_used": [
+        "excel",
+        "blender"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_train_15",
+      "split": "train",
+      "video_path": "train\\synthetic_train_15.mp4",
+      "manifest_path": "train\\synthetic_train_15_manifest.json",
+      "duration_seconds": 720.0,
+      "snippets_count": 6,
+      "segments_count": 7,
+      "breakpoints_count": 6,
+      "categories_used": [
+        "vscode",
+        "blender",
+        "photoshop"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_val_01",
+      "split": "val",
+      "video_path": "val\\synthetic_val_01.mp4",
+      "manifest_path": "val\\synthetic_val_01_manifest.json",
+      "duration_seconds": 720.0,
+      "snippets_count": 6,
+      "segments_count": 8,
+      "breakpoints_count": 7,
+      "categories_used": [
+        "salesforce",
+        "excel",
+        "blender",
+        "autocad"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_val_02",
+      "split": "val",
+      "video_path": "val\\synthetic_val_02.mp4",
+      "manifest_path": "val\\synthetic_val_02_manifest.json",
+      "duration_seconds": 360.0,
+      "snippets_count": 3,
+      "segments_count": 4,
+      "breakpoints_count": 3,
+      "categories_used": [
+        "vscode",
+        "photoshop"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_val_03",
+      "split": "val",
+      "video_path": "val\\synthetic_val_03.mp4",
+      "manifest_path": "val\\synthetic_val_03_manifest.json",
+      "duration_seconds": 600.0,
+      "snippets_count": 5,
+      "segments_count": 8,
+      "breakpoints_count": 7,
+      "categories_used": [
+        "vscode",
+        "salesforce",
+        "blender",
+        "autocad"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_val_04",
+      "split": "val",
+      "video_path": "val\\synthetic_val_04.mp4",
+      "manifest_path": "val\\synthetic_val_04_manifest.json",
+      "duration_seconds": 360.0,
+      "snippets_count": 3,
+      "segments_count": 3,
+      "breakpoints_count": 2,
+      "categories_used": [
+        "salesforce",
+        "vscode",
+        "autocad"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_val_05",
+      "split": "val",
+      "video_path": "val\\synthetic_val_05.mp4",
+      "manifest_path": "val\\synthetic_val_05_manifest.json",
+      "duration_seconds": 600.0,
+      "snippets_count": 5,
+      "segments_count": 6,
+      "breakpoints_count": 5,
+      "categories_used": [
+        "vscode",
+        "excel"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_test_01",
+      "split": "test",
+      "video_path": "test\\synthetic_test_01.mp4",
+      "manifest_path": "test\\synthetic_test_01_manifest.json",
+      "duration_seconds": 360.0,
+      "snippets_count": 3,
+      "segments_count": 3,
+      "breakpoints_count": 2,
+      "categories_used": [
+        "salesforce",
+        "excel",
+        "autocad"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_test_02",
+      "split": "test",
+      "video_path": "test\\synthetic_test_02.mp4",
+      "manifest_path": "test\\synthetic_test_02_manifest.json",
+      "duration_seconds": 480.0,
+      "snippets_count": 4,
+      "segments_count": 5,
+      "breakpoints_count": 4,
+      "categories_used": [
+        "salesforce",
+        "excel",
+        "photoshop"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_test_03",
+      "split": "test",
+      "video_path": "test\\synthetic_test_03.mp4",
+      "manifest_path": "test\\synthetic_test_03_manifest.json",
+      "duration_seconds": 360.0,
+      "snippets_count": 3,
+      "segments_count": 3,
+      "breakpoints_count": 2,
+      "categories_used": [
+        "vscode",
+        "blender",
+        "excel"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_test_04",
+      "split": "test",
+      "video_path": "test\\synthetic_test_04.mp4",
+      "manifest_path": "test\\synthetic_test_04_manifest.json",
+      "duration_seconds": 720.0,
+      "snippets_count": 6,
+      "segments_count": 8,
+      "breakpoints_count": 7,
+      "categories_used": [
+        "vscode",
+        "excel",
+        "blender",
+        "autocad"
+      ]
+    },
+    {
+      "synthetic_id": "synthetic_test_05",
+      "split": "test",
+      "video_path": "test\\synthetic_test_05.mp4",
+      "manifest_path": "test\\synthetic_test_05_manifest.json",
+      "duration_seconds": 600.0,
+      "snippets_count": 5,
+      "segments_count": 6,
+      "breakpoints_count": 5,
+      "categories_used": [
+        "vscode",
+        "excel",
+        "photoshop",
+        "salesforce",
+        "autocad"
+      ]
+    }
+  ]
+}

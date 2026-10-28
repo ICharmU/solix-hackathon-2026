@@ -1,0 +1,125 @@
+{
+  "synthetic_id": "synthetic_train_07",
+  "split": "train",
+  "total_duration_seconds": 480.0,
+  "source_snippet_count": 4,
+  "total_segments": 5,
+  "total_breakpoints": 4,
+  "breakpoints": [
+    60.0,
+    180.0,
+    300.0,
+    360.0
+  ],
+  "source_snippets": [
+    {
+      "snippet_index": 1,
+      "category": "vscode",
+      "source_video_id": "data/vscode/Y_JQti8YLn0.mp4",
+      "start_offset_s": 59.0,
+      "full_duration_s": 120.0
+    },
+    {
+      "snippet_index": 2,
+      "category": "autocad",
+      "source_video_id": "data/autocad/N-p1FHcb4uo.mp4",
+      "start_offset_s": 12.0,
+      "full_duration_s": 120.0
+    },
+    {
+      "snippet_index": 3,
+      "category": "excel",
+      "source_video_id": "data/excel/OasQ9I_dNyQ.mp4",
+      "start_offset_s": 27.0,
+      "full_duration_s": 120.0
+    },
+    {
+      "snippet_index": 4,
+      "category": "autocad",
+      "source_video_id": "data/autocad/L-WlStukfDs.mp4",
+      "start_offset_s": 46.0,
+      "full_duration_s": 120.0
+    }
+  ],
+  "segments": [
+    {
+      "segment_id": "seg_01",
+      "segment_index": 1,
+      "source_snippet_index": 3,
+      "source_video_id": "data/excel/OasQ9I_dNyQ.mp4",
+      "category": "excel",
+      "part": "first_half",
+      "start_time_s": 0.0,
+      "end_time_s": 60.0,
+      "duration_s": 60.0,
+      "is_interruption": false,
+      "interrupted_by_snippets": [],
+      "resumes_segment_id": null,
+      "resumed_in_segment_id": "seg_04"
+    },
+    {
+      "segment_id": "seg_02",
+      "segment_index": 2,
+      "source_snippet_index": 1,
+      "source_video_id": "data/vscode/Y_JQti8YLn0.mp4",
+      "category": "vscode",
+      "part": "full",
+      "start_time_s": 60.0,
+      "end_time_s": 180.0,
+      "duration_s": 120.0,
+      "is_interruption": true,
+      "interrupted_by_snippets": [
+        3
+      ],
+      "resumes_segment_id": null,
+      "resumed_in_segment_id": null
+    },
+    {
+      "segment_id": "seg_03",
+      "segment_index": 3,
+      "source_snippet_index": 2,
+      "source_video_id": "data/autocad/N-p1FHcb4uo.mp4",
+      "category": "autocad",
+      "part": "full",
+      "start_time_s": 180.0,
+      "end_time_s": 300.0,
+      "duration_s": 120.0,
+      "is_interruption": true,
+      "interrupted_by_snippets": [
+        3
+      ],
+      "resumes_segment_id": null,
+      "resumed_in_segment_id": null
+    },
+    {
+      "segment_id": "seg_04",
+      "segment_index": 4,
+      "source_snippet_index": 3,
+      "source_video_id": "data/excel/OasQ9I_dNyQ.mp4",
+      "category": "excel",
+      "part": "second_half",
+      "start_time_s": 300.0,
+      "end_time_s": 360.0,
+      "duration_s": 60.0,
+      "is_interruption": false,
+      "interrupted_by_snippets": [],
+      "resumes_segment_id": "seg_01",
+      "resumed_in_segment_id": null
+    },
+    {
+      "segment_id": "seg_05",
+      "segment_index": 5,
+      "source_snippet_index": 4,
+      "source_video_id": "data/autocad/L-WlStukfDs.mp4",
+      "category": "autocad",
+      "part": "full",
+      "start_time_s": 360.0,
+      "end_time_s": 480.0,
+      "duration_s": 120.0,
+      "is_interruption": false,
+      "interrupted_by_snippets": [],
+      "resumes_segment_id": null,
+      "resumed_in_segment_id": null
+    }
+  ]
+}

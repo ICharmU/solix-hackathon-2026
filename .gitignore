@@ -15,6 +15,7 @@ data/artifacts/
 data/*.mp4
 data/*.mkv
 data/*.wav
+data/synthetic/*/*.mp4
 *.pyc
 __pycache__/
 .cache/

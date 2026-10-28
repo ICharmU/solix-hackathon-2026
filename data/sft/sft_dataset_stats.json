@@ -1,0 +1,10 @@
+{
+  "num_train_samples": 250,
+  "num_val_samples": 50,
+  "train_tokens_per_epoch": 115911,
+  "epochs": 3,
+  "total_training_tokens": 347733,
+  "cost_per_million": 3.0,
+  "estimated_training_cost_usd": 1.0432,
+  "avg_tokens_per_sample": 463.6
+}
