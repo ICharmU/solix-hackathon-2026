@@ -1,0 +1,13 @@
+[workspace]
+channels = ["conda-forge"]
+name = "solix-hackathon-2026"
+platforms = ["win-64"]
+version = "0.1.0"
+
+[tasks]
+test-connection = "python test_connection.py"
+
+[dependencies]
+python = ">=3.15.2,<3.16"
+openai = ">=3.40.0,<4"
+python-dotenv = ">=1.2.4,<2"

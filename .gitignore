@@ -1,0 +1,8 @@
+# pixi environments
+.pixi/*
+!.pixi/config.toml
+
+# Environment variables & secrets
+.env
+*.env
+
