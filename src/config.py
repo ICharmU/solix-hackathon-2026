@@ -4,7 +4,23 @@ Configuration settings for the agentic workflow capture and analysis pipeline.
 
 from pathlib import Path
 import os
+import sys
 from dotenv import load_dotenv
+
+# Windows Conda DLL Directory & Matplotlib Bootstrapping
+if sys.platform == "win32":
+    env_dir = Path(sys.prefix)
+    lib_bin = env_dir / "Library" / "bin"
+    if lib_bin.exists():
+        try:
+            os.add_dll_directory(str(lib_bin))
+        except Exception:
+            pass
+        os.environ["PATH"] = str(lib_bin) + ";" + os.environ.get("PATH", "")
+
+    mpl_dir = Path(__file__).resolve().parent.parent / "data" / ".mpl_cache"
+    mpl_dir.mkdir(parents=True, exist_ok=True)
+    os.environ.setdefault("MPLCONFIGDIR", str(mpl_dir))
 
 # Load environment variables
 load_dotenv()

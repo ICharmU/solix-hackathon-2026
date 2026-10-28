@@ -6,10 +6,24 @@ import os
 import sys
 from pathlib import Path
 
-# Configure matplotlib cache directory locally within workspace
-mpl_dir = Path(__file__).resolve().parent.parent / ".cache" / "matplotlib"
+# Ensure project root is in sys.path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+# Ensure Windows Conda DLL Directory & Matplotlib Cache
+if sys.platform == "win32":
+    lib_bin = Path(sys.prefix) / "Library" / "bin"
+    if lib_bin.exists():
+        try:
+            os.add_dll_directory(str(lib_bin))
+        except Exception:
+            pass
+        os.environ["PATH"] = str(lib_bin) + ";" + os.environ.get("PATH", "")
+
+mpl_dir = Path(__file__).resolve().parent.parent / "data" / ".mpl_cache"
 mpl_dir.mkdir(parents=True, exist_ok=True)
-os.environ["MPLCONFIGDIR"] = str(mpl_dir)
+os.environ.setdefault("MPLCONFIGDIR", str(mpl_dir))
+
+from src.config import BASE_DIR
 
 import json
 import argparse
@@ -287,13 +301,13 @@ def generate_plot(
         t = timestamps[idx]
         prev_app = apps[idx - 1] if idx > 0 else "Start"
         next_app = apps[idx]
-        print(f"  \u2022 BREAKPOINT at t={t:2d}s: difference={differences[idx]:.4f} (dot={dot_products[idx]:.4f}) | {prev_app} \u2192 {next_app}")
+        print(f"  * BREAKPOINT at t={t:2d}s: difference={differences[idx]:.4f} (dot={dot_products[idx]:.4f}) | {prev_app} -> {next_app}")
 
     print("\n--- Demarcated Distinct Tasks ---")
     for i in range(len(task_boundaries) - 1):
         t_start = task_boundaries[i]
         t_end = task_boundaries[i + 1]
-        print(f"  \u2022 Task {i+1}: t = {t_start:2d}s to {t_end:2d}s (duration: {t_end - t_start}s)")
+        print(f"  * Task {i+1}: t = {t_start:2d}s to {t_end:2d}s (duration: {t_end - t_start}s)")
 
 
 if __name__ == "__main__":

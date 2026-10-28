@@ -172,16 +172,42 @@ def enrich_manifest(
 
     if mock:
         logger.info("Mock mode enabled: generating deterministic mock descriptors and embeddings.")
+        demo_schedule = [
+            (0, 10, "OBS Studio", "OBS Studio 29.1.3", "Audio Mixer & Scenes", "User is configuring recording settings and checking audio mixer levels."),
+            (11, 19, "Google Chrome", "Architecture Implementation Plan - Google Docs", "Document outline, Architecture Table", "User is reading and reviewing architectural specifications in document."),
+            (20, 30, "VS Code", "src/models/continuation_net.py", "TaskContinuationNet forward method", "User is reviewing and typing neural network code."),
+            (31, 31, "Google Chrome", "Architecture Implementation Plan - Google Docs", "Architecture Table header", "User is navigating between browser tab and IDE."),
+            (32, 36, "VS Code", "src/models/differentiation_net.py", "TaskDifferentiationNet cross-attention", "User is inspecting task differentiation network code."),
+            (37, 41, "Google Chrome", "Status Monitor - Google Chrome", "Status display", "No user interaction observed; static screen display."),
+            (42, 54, "Google Chrome", "API Documentation & Specifications", "Endpoint schema table", "User is reading specifications and reviewing tables."),
+            (55, 9999, "OBS Studio", "OBS Studio 29.1.3", "Stop Recording Button", "User is clicking Stop Recording in OBS Studio.")
+        ]
+        from src.models.dataset_builder import get_semantic_action_embedding
+        import numpy as np
+
         for slot in slots:
+            ts = slot.timestamp
+            app, win, schema, action = "VS Code", "Editor", "Code", "Active typing"
+            for start_t, end_t, s_app, s_win, s_schema, s_action in demo_schedule:
+                if start_t <= ts <= end_t:
+                    app, win, schema, action = s_app, s_win, s_schema, s_action
+                    break
+
             slot.descriptor = FrameDescriptor(
-                active_application="Mock App",
-                window_title="Mock Window",
-                schema_context="Mock Schema Context",
-                observed_interaction="Mock Interaction",
-                background_apps=["Mock BG"]
+                active_application=app,
+                window_title=win,
+                schema_context=schema,
+                observed_interaction=action,
+                background_apps=[]
             )
             slot.raw_text = slot.descriptor.to_raw_text(slot.audio_text)
-            slot.embedding = [0.05 * (slot.timestamp % 5)] * 64
+
+            base_128 = get_semantic_action_embedding(app, action, win, dim=128)
+            pad_1536 = np.zeros(1536, dtype=np.float32)
+            pad_1536[:128] = base_128
+            pad_1536[128:132] = np.array([0.01 * (ts % 5), 0.005 * (ts % 7), 0.002 * (ts % 11), 0.0], dtype=np.float32)
+            norm = np.linalg.norm(pad_1536)
+            slot.embedding = (pad_1536 / (norm + 1e-8)).tolist()
         return manifest
 
     extractor = DescriptorExtractor(detail=detail)

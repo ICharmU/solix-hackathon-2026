@@ -83,8 +83,25 @@ def get_semantic_action_embedding(
     - 3% Target Element Modulation
     Result: Same-app actions have cos ~ 0.85; different-app actions have cos ~ 0.05.
     """
-    cat_key = category.lower()
-    base_anchor = APP_ANCHORS.get(cat_key, APP_ANCHORS["vscode"])
+    cat_lower = category.lower()
+    if cat_lower in APP_ANCHORS:
+        cat_key = cat_lower
+    elif "chrome" in cat_lower or "web" in cat_lower or "browser" in cat_lower:
+        cat_key = "salesforce"
+    elif "obs" in cat_lower or "media" in cat_lower or "record" in cat_lower:
+        cat_key = "photoshop"
+    elif "code" in cat_lower or "vs" in cat_lower or "ide" in cat_lower:
+        cat_key = "vscode"
+    elif "cad" in cat_lower:
+        cat_key = "autocad"
+    elif "blend" in cat_lower or "3d" in cat_lower:
+        cat_key = "blender"
+    elif "sheet" in cat_lower or "table" in cat_lower or "excel" in cat_lower:
+        cat_key = "excel"
+    else:
+        cat_key = "vscode"
+
+    base_anchor = APP_ANCHORS[cat_key]
 
     sub_vec = text_to_embedding(subroutine, dim=dim) if subroutine else np.zeros(dim, dtype=np.float32)
     act_vec = text_to_embedding(target_element, dim=dim) if target_element else np.zeros(dim, dtype=np.float32)
