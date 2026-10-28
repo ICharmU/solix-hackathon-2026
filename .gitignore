@@ -15,5 +15,9 @@ data/*.mp4
 data/*.mkv
 data/*.wav
 *.pyc
+__pycache__/
+.cache/
+.mplconfig/
+*.pid
 
 

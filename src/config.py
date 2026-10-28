@@ -15,6 +15,7 @@ DATA_DIR = BASE_DIR / "data"
 FRAMES_DIR = DATA_DIR / "frames"
 AUDIO_DIR = DATA_DIR / "audio"
 PROCESSED_DIR = DATA_DIR / "processed"
+ARTIFACT_DIR = Path(os.getenv("ARTIFACT_DIR", r"C:\Users\seani\.gemini\antigravity\brain\4e790650-7d9f-43b7-a1ba-18320df80d5f"))
 
 # Ensure directories exist
 for directory in (DATA_DIR, FRAMES_DIR, AUDIO_DIR, PROCESSED_DIR):
