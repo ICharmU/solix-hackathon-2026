@@ -12,15 +12,24 @@ cuda = { features = ["cuda"], no-default-feature = true }
 channels = ["conda-forge"]
 platforms = ["win-64"]
 
+[feature.cuda.system-requirements]
+cuda = "13.2"
+
 [feature.cuda.dependencies]
 python = "3.11.*"
-pytorch = "2.11.0"
+pytorch-gpu = "2.11.0.*"
 numpy = "*"
 pydantic = ">=2.0"
 matplotlib = "*"
+python-dotenv = ">=1.0"
+openai = ">=1.0"
 
 [feature.cuda.tasks]
 test-cuda = "python -c \"import torch; print('PyTorch:', torch.__version__, 'CUDA available:', torch.cuda.is_available())\""
+train-models = "python -m src.train_local_models"
+test-neural = "python -m unittest tests/test_neural_pipeline.py"
+contextualize = "python -m src.document_context_engine"
+pipeline = "python -m src.main"
 
 [tasks]
 test-connection = "python test_connection.py"

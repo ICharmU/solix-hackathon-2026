@@ -300,7 +300,7 @@ class Tier2Synthesizer:
         # Assemble prompt payload
         segments_summary = []
         for s in manifest.segments:
-            segments_summary.append({
+            seg_dict = {
                 "segment_id": s.segment_id,
                 "time_range": f"{s.start_time}s - {s.end_time}s",
                 "duration_seconds": s.duration_seconds,
@@ -309,7 +309,13 @@ class Tier2Synthesizer:
                 "observed_interaction": s.summary_interaction,
                 "cluster_id": s.cluster_id,
                 "is_interruption": s.is_interruption,
-            })
+            }
+            if hasattr(s, "neural_transition_type") and s.neural_transition_type:
+                seg_dict["neural_transition_type"] = s.neural_transition_type
+                seg_dict["neural_confidence"] = s.neural_confidence
+                seg_dict["resumed_segment_id"] = s.resumed_segment_id
+                seg_dict["continuation_probability"] = s.continuation_probability
+            segments_summary.append(seg_dict)
 
         clusters_summary = []
         for c in manifest.clusters:
@@ -338,6 +344,7 @@ class Tier2Synthesizer:
             "source_video": manifest.source_video,
             "total_segments_count": manifest.total_segments,
             "difference_threshold_used": manifest.difference_threshold,
+            "document_context": manifest.document_context if hasattr(manifest, "document_context") else None,
             "reconstructed_segments": segments_summary,
             "subroutine_clusters": clusters_summary,
             "stitched_macro_sequences": stitched_summary,

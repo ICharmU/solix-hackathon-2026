@@ -239,6 +239,7 @@ def build_dashboard_html(
           <div class="h-3 w-3 rounded-full bg-emerald-500 animate-pulse"></div>
           <span class="text-xs uppercase font-bold tracking-wider text-emerald-400">Agentic Workflow Analysis System</span>
           <span class="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 font-medium">Phase 5 Production</span>
+          <span class="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400 font-medium border border-purple-500/30">⚡ CUDA Neural Context Tracker</span>
         </div>
         <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight mt-1 text-[var(--foreground,#f8fafc)]">
           Autonomous Workflow Synthesis & Automation Dashboard
@@ -485,7 +486,9 @@ def build_dashboard_html(
               <th class="py-2 px-3">Duration</th>
               <th class="py-2 px-3">Primary App</th>
               <th class="py-2 px-3">Cluster ID</th>
-              <th class="py-2 px-3">Interruption</th>
+              <th class="py-2 px-3">Neural Transition</th>
+              <th class="py-2 px-3">Conf</th>
+              <th class="py-2 px-3">Stack Resumption</th>
               <th class="py-2 px-3">Interaction Summary</th>
             </tr>
           </thead>
@@ -776,13 +779,28 @@ def build_dashboard_html(
       segmentsData.forEach(seg => {{
         const tr = document.createElement('tr');
         tr.className = 'border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors';
+        const tType = seg.neural_transition_type;
+        let badgeHtml = '<span class="text-slate-500">NONE</span>';
+        if (tType === 'RESUME') {{
+          badgeHtml = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">RESUME</span>';
+        }} else if (tType === 'NEW_MACRO') {{
+          badgeHtml = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">NEW_MACRO</span>';
+        }} else if (tType === 'SUBROUTINE_SHIFT') {{
+          badgeHtml = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">SUBROUTINE_SHIFT</span>';
+        }}
+
+        const confText = seg.neural_confidence ? (seg.neural_confidence * 100).toFixed(1) + '%' : '—';
+        const resumeText = seg.resumed_segment_id ? `<span class="text-emerald-400 font-mono font-bold">↩ ${{seg.resumed_segment_id}}</span>` : '<span class="text-slate-600">—</span>';
+
         tr.innerHTML = `
           <td class="py-2 px-3 font-mono text-blue-400">${{seg.segment_id}}</td>
           <td class="py-2 px-3 font-mono">${{seg.start_time}}s - ${{seg.end_time}}s</td>
           <td class="py-2 px-3">${{seg.duration_seconds}}s</td>
           <td class="py-2 px-3 font-semibold">${{seg.primary_application}}</td>
           <td class="py-2 px-3 font-mono text-purple-400">${{seg.cluster_id || 'N/A'}}</td>
-          <td class="py-2 px-3">${{seg.is_interruption ? '<span class="text-amber-400">Yes</span>' : '<span class="text-slate-500">No</span>'}}</td>
+          <td class="py-2 px-3">${{badgeHtml}}</td>
+          <td class="py-2 px-3 font-mono text-slate-300">${{confText}}</td>
+          <td class="py-2 px-3 font-mono">${{resumeText}}</td>
           <td class="py-2 px-3 text-[var(--muted-foreground,#94a3b8)] truncate max-w-xs">${{seg.summary_interaction || 'N/A'}}</td>
         `;
         tbody.appendChild(tr);

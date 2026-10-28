@@ -1,0 +1,237 @@
+{
+  "synthetic_id": "synthetic_train_02",
+  "split": "train",
+  "total_duration_seconds": 360.0,
+  "document_context": {
+    "project_id": "PRJ-SYNTHETIC_TRAIN_02",
+    "project_title": "Blender & Salesforce Enterprise Operational Workflow",
+    "prd_summary": "Cross-functional operational pipeline executing sequential and interleaved tasks across Blender, Salesforce. Requires strict state continuity, rigorous verification of intermediate deliverables, and accurate tracking of task interruptions and resumptions.",
+    "business_unit": "Digital Operations & Technical Design",
+    "active_tickets": [
+      {
+        "ticket_id": "TICKET-BLEN-01",
+        "category": "blender",
+        "title": "Blender: Rig 3D Scene Geometry & Connect PBR Material Shaders",
+        "target_artifacts": [
+          "Scene_Asset_Rig.blend",
+          "Principled BSDF",
+          "3D Viewport"
+        ],
+        "acceptance_criteria": "Mesh normals unified, base color texture linked, transforms normalized.",
+        "priority": "Critical"
+      },
+      {
+        "ticket_id": "TICKET-SALE-02",
+        "category": "salesforce",
+        "title": "Salesforce: Advance Enterprise Deal Stage & Log Technical Scope",
+        "target_artifacts": [
+          "Opportunity: Enterprise Tenant Expansion",
+          "Chevron Stage Bar",
+          "Activity Timeline"
+        ],
+        "acceptance_criteria": "Deal moved to Proposal/Review stage, call notes and engineering deliverables logged.",
+        "priority": "High"
+      }
+    ],
+    "data_schemas": {
+      "blender": {
+        "primary_artifacts": [
+          "Scene_Asset_Rig.blend",
+          "Principled BSDF",
+          "3D Viewport"
+        ],
+        "validation_rule": "Mesh normals unified, base color texture linked, transforms normalized."
+      },
+      "salesforce": {
+        "primary_artifacts": [
+          "Opportunity: Enterprise Tenant Expansion",
+          "Chevron Stage Bar",
+          "Activity Timeline"
+        ],
+        "validation_rule": "Deal moved to Proposal/Review stage, call notes and engineering deliverables logged."
+      }
+    },
+    "domain_constraints": [
+      "All intermediate work-in-progress must be saved before switching application contexts.",
+      "When an interruption occurs, the primary task state must be preserved and cleanly resumed.",
+      "Final outputs must be validated against ticket acceptance criteria."
+    ]
+  },
+  "segments": [
+    {
+      "segment_id": "seg_01",
+      "segment_index": 1,
+      "category": "blender",
+      "start_time_s": 0.0,
+      "end_time_s": 60.0,
+      "duration_s": 60.0,
+      "governing_ticket_id": "TICKET-BLEN-01",
+      "governing_ticket_title": "Blender: Rig 3D Scene Geometry & Connect PBR Material Shaders",
+      "contextual_role": "PRIMARY_OBJECTIVE",
+      "is_interruption": false,
+      "resumes_segment_id": null,
+      "resumed_in_segment_id": "seg_04",
+      "subroutine": "subroutine_blender_shader_link",
+      "initial_state_s0": {
+        "app": "Blender",
+        "window": "Scene_Asset_Rig.blend - Blender",
+        "focused": "Shader Editor",
+        "content": "Principled BSDF & Image Texture nodes"
+      },
+      "action_a": {
+        "operator": "DRAG_DROP",
+        "target": "Shader Socket: Color",
+        "payload": "Connect to Base Color",
+        "modifiers": []
+      },
+      "outcome_state_s1": {
+        "app": "Blender",
+        "window": "Scene_Asset_Rig.blend - Blender",
+        "focused": "Shader Editor",
+        "content": "Noodle link established",
+        "feedback": "Material preview rendered with diffuse texture"
+      },
+      "cognitive_state": "ACTIVE_INTERACTION"
+    },
+    {
+      "segment_id": "seg_02",
+      "segment_index": 2,
+      "category": "blender",
+      "start_time_s": 60.0,
+      "end_time_s": 180.0,
+      "duration_s": 120.0,
+      "governing_ticket_id": "TICKET-BLEN-01",
+      "governing_ticket_title": "Blender: Rig 3D Scene Geometry & Connect PBR Material Shaders",
+      "contextual_role": "CROSS_TASK_INTERRUPTION",
+      "is_interruption": true,
+      "resumes_segment_id": null,
+      "resumed_in_segment_id": null,
+      "subroutine": "subroutine_blender_transform_mesh",
+      "initial_state_s0": {
+        "app": "Blender",
+        "window": "Scene_Asset_Rig.blend - Blender",
+        "focused": "3D Viewport",
+        "content": "Selected: Structural_Shell"
+      },
+      "action_a": {
+        "operator": "HOTKEY",
+        "target": "3D Viewport",
+        "payload": "S -> Z -> 1.5",
+        "modifiers": [
+          "Enter"
+        ]
+      },
+      "outcome_state_s1": {
+        "app": "Blender",
+        "window": "Scene_Asset_Rig.blend - Blender",
+        "focused": "3D Viewport",
+        "content": "Object scaled 1.5 on Z axis",
+        "feedback": "Gizmo updated, mesh geometry refreshed"
+      },
+      "cognitive_state": "ACTIVE_INTERACTION"
+    },
+    {
+      "segment_id": "seg_03",
+      "segment_index": 3,
+      "category": "salesforce",
+      "start_time_s": 180.0,
+      "end_time_s": 300.0,
+      "duration_s": 120.0,
+      "governing_ticket_id": "TICKET-SALE-02",
+      "governing_ticket_title": "Salesforce: Advance Enterprise Deal Stage & Log Technical Scope",
+      "contextual_role": "CROSS_TASK_INTERRUPTION",
+      "is_interruption": true,
+      "resumes_segment_id": null,
+      "resumed_in_segment_id": null,
+      "subroutine": "subroutine_salesforce_log_activity",
+      "initial_state_s0": {
+        "app": "Salesforce",
+        "window": "Opportunity: Enterprise Expansion - Salesforce",
+        "focused": "Activity Component -> Log Call",
+        "content": "Comments field empty"
+      },
+      "action_a": {
+        "operator": "KEYSTROKE_INPUT",
+        "target": "Comments Field",
+        "payload": "Completed architectural review with facilities team. Proposal sent.",
+        "modifiers": [
+          "Save"
+        ]
+      },
+      "outcome_state_s1": {
+        "app": "Salesforce",
+        "window": "Opportunity: Enterprise Expansion - Salesforce",
+        "focused": "Activity Timeline",
+        "content": "Call logged by current user",
+        "feedback": "New activity item placed on timeline"
+      },
+      "cognitive_state": "ACTIVE_INTERACTION"
+    },
+    {
+      "segment_id": "seg_04",
+      "segment_index": 4,
+      "category": "blender",
+      "start_time_s": 300.0,
+      "end_time_s": 360.0,
+      "duration_s": 60.0,
+      "governing_ticket_id": "TICKET-BLEN-01",
+      "governing_ticket_title": "Blender: Rig 3D Scene Geometry & Connect PBR Material Shaders",
+      "contextual_role": "TASK_RESUMPTION",
+      "is_interruption": false,
+      "resumes_segment_id": "seg_01",
+      "resumed_in_segment_id": null,
+      "subroutine": "subroutine_blender_transform_mesh",
+      "initial_state_s0": {
+        "app": "Blender",
+        "window": "Scene_Asset_Rig.blend - Blender",
+        "focused": "3D Viewport",
+        "content": "Selected: Structural_Shell"
+      },
+      "action_a": {
+        "operator": "HOTKEY",
+        "target": "3D Viewport",
+        "payload": "S -> Z -> 1.5",
+        "modifiers": [
+          "Enter"
+        ]
+      },
+      "outcome_state_s1": {
+        "app": "Blender",
+        "window": "Scene_Asset_Rig.blend - Blender",
+        "focused": "3D Viewport",
+        "content": "Object scaled 1.5 on Z axis",
+        "feedback": "Gizmo updated, mesh geometry refreshed"
+      },
+      "cognitive_state": "ACTIVE_INTERACTION"
+    }
+  ],
+  "breakpoints": [
+    {
+      "time_s": 60.0,
+      "from_segment": "seg_01",
+      "to_segment": "seg_02",
+      "from_ticket": "TICKET-BLEN-01",
+      "to_ticket": "TICKET-BLEN-01",
+      "transition_type": "SUBROUTINE_SHIFT",
+      "context_rationale": "Sequential progression within TICKET-BLEN-01: subroutine_blender_shader_link -> subroutine_blender_transform_mesh."
+    },
+    {
+      "time_s": 180.0,
+      "from_segment": "seg_02",
+      "to_segment": "seg_03",
+      "from_ticket": "TICKET-BLEN-01",
+      "to_ticket": "TICKET-SALE-02",
+      "transition_type": "NEW_MACRO",
+      "context_rationale": "Transitioning from ticket TICKET-BLEN-01 to new objective TICKET-SALE-02."
+    },
+    {
+      "time_s": 300.0,
+      "from_segment": "seg_03",
+      "to_segment": "seg_04",
+      "from_ticket": "TICKET-SALE-02",
+      "to_ticket": "TICKET-BLEN-01",
+      "transition_type": "RESUME",
+      "context_rationale": "Resuming TICKET-BLEN-01 (Blender: Rig 3D Scene Geometry & Connect PBR Material Shaders) which was previously interrupted by TICKET-SALE-02."
+    }
+  ]
+}

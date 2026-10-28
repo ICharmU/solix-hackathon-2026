@@ -1,0 +1,197 @@
+{
+  "processed_splits": {
+    "train": {
+      "videos": 15,
+      "items": [
+        {
+          "synthetic_id": "synthetic_train_01",
+          "project_title": "Autocad & Blender Enterprise Operational Workflow",
+          "tickets_count": 2,
+          "segments": 4,
+          "breakpoints": 3
+        },
+        {
+          "synthetic_id": "synthetic_train_02",
+          "project_title": "Blender & Salesforce Enterprise Operational Workflow",
+          "tickets_count": 2,
+          "segments": 4,
+          "breakpoints": 3
+        },
+        {
+          "synthetic_id": "synthetic_train_03",
+          "project_title": "Autocad & Blender & Excel & Photoshop Enterprise Operational Workflow",
+          "tickets_count": 4,
+          "segments": 5,
+          "breakpoints": 4
+        },
+        {
+          "synthetic_id": "synthetic_train_04",
+          "project_title": "Excel & Photoshop & Salesforce Enterprise Operational Workflow",
+          "tickets_count": 3,
+          "segments": 3,
+          "breakpoints": 2
+        },
+        {
+          "synthetic_id": "synthetic_train_05",
+          "project_title": "Blender & Excel & Vscode Enterprise Operational Workflow",
+          "tickets_count": 3,
+          "segments": 4,
+          "breakpoints": 3
+        },
+        {
+          "synthetic_id": "synthetic_train_06",
+          "project_title": "Blender & Vscode Enterprise Operational Workflow",
+          "tickets_count": 2,
+          "segments": 7,
+          "breakpoints": 6
+        },
+        {
+          "synthetic_id": "synthetic_train_07",
+          "project_title": "Autocad & Excel & Vscode Enterprise Operational Workflow",
+          "tickets_count": 3,
+          "segments": 5,
+          "breakpoints": 4
+        },
+        {
+          "synthetic_id": "synthetic_train_08",
+          "project_title": "Excel & Photoshop & Vscode Enterprise Operational Workflow",
+          "tickets_count": 3,
+          "segments": 9,
+          "breakpoints": 8
+        },
+        {
+          "synthetic_id": "synthetic_train_09",
+          "project_title": "Autocad & Photoshop & Salesforce & Vscode Enterprise Operational Workflow",
+          "tickets_count": 4,
+          "segments": 9,
+          "breakpoints": 8
+        },
+        {
+          "synthetic_id": "synthetic_train_10",
+          "project_title": "Blender & Salesforce & Vscode Enterprise Operational Workflow",
+          "tickets_count": 3,
+          "segments": 5,
+          "breakpoints": 4
+        },
+        {
+          "synthetic_id": "synthetic_train_11",
+          "project_title": "Autocad & Excel & Salesforce Enterprise Operational Workflow",
+          "tickets_count": 3,
+          "segments": 4,
+          "breakpoints": 3
+        },
+        {
+          "synthetic_id": "synthetic_train_12",
+          "project_title": "Autocad & Blender & Salesforce Enterprise Operational Workflow",
+          "tickets_count": 3,
+          "segments": 4,
+          "breakpoints": 3
+        },
+        {
+          "synthetic_id": "synthetic_train_13",
+          "project_title": "Blender & Excel & Salesforce & Vscode Enterprise Operational Workflow",
+          "tickets_count": 4,
+          "segments": 9,
+          "breakpoints": 8
+        },
+        {
+          "synthetic_id": "synthetic_train_14",
+          "project_title": "Blender & Excel Enterprise Operational Workflow",
+          "tickets_count": 2,
+          "segments": 4,
+          "breakpoints": 3
+        },
+        {
+          "synthetic_id": "synthetic_train_15",
+          "project_title": "Blender & Photoshop & Vscode Enterprise Operational Workflow",
+          "tickets_count": 3,
+          "segments": 7,
+          "breakpoints": 6
+        }
+      ]
+    },
+    "val": {
+      "videos": 5,
+      "items": [
+        {
+          "synthetic_id": "synthetic_val_01",
+          "project_title": "Autocad & Blender & Excel & Salesforce Enterprise Operational Workflow",
+          "tickets_count": 4,
+          "segments": 8,
+          "breakpoints": 7
+        },
+        {
+          "synthetic_id": "synthetic_val_02",
+          "project_title": "Photoshop & Vscode Enterprise Operational Workflow",
+          "tickets_count": 2,
+          "segments": 4,
+          "breakpoints": 3
+        },
+        {
+          "synthetic_id": "synthetic_val_03",
+          "project_title": "Autocad & Blender & Salesforce & Vscode Enterprise Operational Workflow",
+          "tickets_count": 4,
+          "segments": 8,
+          "breakpoints": 7
+        },
+        {
+          "synthetic_id": "synthetic_val_04",
+          "project_title": "Autocad & Salesforce & Vscode Enterprise Operational Workflow",
+          "tickets_count": 3,
+          "segments": 3,
+          "breakpoints": 2
+        },
+        {
+          "synthetic_id": "synthetic_val_05",
+          "project_title": "Excel & Vscode Enterprise Operational Workflow",
+          "tickets_count": 2,
+          "segments": 6,
+          "breakpoints": 5
+        }
+      ]
+    },
+    "test": {
+      "videos": 5,
+      "items": [
+        {
+          "synthetic_id": "synthetic_test_01",
+          "project_title": "Autocad & Excel & Salesforce Enterprise Operational Workflow",
+          "tickets_count": 3,
+          "segments": 3,
+          "breakpoints": 2
+        },
+        {
+          "synthetic_id": "synthetic_test_02",
+          "project_title": "Excel & Photoshop & Salesforce Enterprise Operational Workflow",
+          "tickets_count": 3,
+          "segments": 5,
+          "breakpoints": 4
+        },
+        {
+          "synthetic_id": "synthetic_test_03",
+          "project_title": "Blender & Excel & Vscode Enterprise Operational Workflow",
+          "tickets_count": 3,
+          "segments": 3,
+          "breakpoints": 2
+        },
+        {
+          "synthetic_id": "synthetic_test_04",
+          "project_title": "Autocad & Blender & Excel & Vscode Enterprise Operational Workflow",
+          "tickets_count": 4,
+          "segments": 8,
+          "breakpoints": 7
+        },
+        {
+          "synthetic_id": "synthetic_test_05",
+          "project_title": "Autocad & Excel & Photoshop & Salesforce & Vscode Enterprise Operational Workflow",
+          "tickets_count": 5,
+          "segments": 6,
+          "breakpoints": 5
+        }
+      ]
+    }
+  },
+  "total_videos_reclassified": 25,
+  "total_segments_contextualized": 137,
+  "total_breakpoints_reclassified": 112
+}

@@ -1,0 +1,36 @@
+{
+  "device": "cuda",
+  "device_name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+  "model_1_continuation": {
+    "checkpoint": "C:\\Users\\seani\\OneDrive\\Desktop\\solix-hackathon-2026\\data\\checkpoints\\task_continuation_net.pt",
+    "validation_metrics": {
+      "epoch": 35,
+      "val_loss": 4.7642817662563175e-05,
+      "accuracy": 1.0,
+      "breakpoint_precision": 1.0,
+      "breakpoint_recall": 1.0,
+      "breakpoint_f1": 1.0
+    },
+    "test_metrics": {
+      "total_steps": 272,
+      "accuracy": 1.0,
+      "breakpoint_precision": 1.0,
+      "breakpoint_recall": 1.0,
+      "breakpoint_f1": 1.0
+    }
+  },
+  "model_2_differentiation": {
+    "checkpoint": "C:\\Users\\seani\\OneDrive\\Desktop\\solix-hackathon-2026\\data\\checkpoints\\task_differentiation_net.pt",
+    "validation_metrics": {
+      "epoch": 13,
+      "val_loss": 1.177333116531372,
+      "accuracy": 0.75,
+      "resumption_pointer_accuracy": 0.7142857142857143
+    },
+    "test_metrics": {
+      "total_breakpoints": 20,
+      "accuracy": 0.8,
+      "resumption_pointer_accuracy": 1.0
+    }
+  }
+}

@@ -6,16 +6,6 @@ reconciles interleaved interruptions (A1 -> B -> A2), and stitches composite wor
 
 import json
 import re
-
-def format_compact_embeddings_json(manifest: SegmentedWorkflowManifest) -> str:
-    """Serializes SegmentedWorkflowManifest to JSON with indent=2 while keeping centroid_embedding arrays on a single line."""
-    raw_json = manifest.model_dump_json(indent=2)
-    compact_json = re.sub(
-        r'("centroid_embedding":\s*\[\s*)([\s\S]*?)(\s*\])',
-        lambda m: f'"centroid_embedding": [{", ".join(x.strip() for x in m.group(2).split(",") if x.strip())}]',
-        raw_json
-    )
-    return compact_json
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
@@ -30,6 +20,17 @@ from src.schemas import (
     TimelineManifest,
 )
 from src.boundary_detector import BoundaryDetector
+
+
+def format_compact_embeddings_json(manifest: SegmentedWorkflowManifest) -> str:
+    """Serializes SegmentedWorkflowManifest to JSON with indent=2 while keeping centroid_embedding arrays on a single line."""
+    raw_json = manifest.model_dump_json(indent=2)
+    compact_json = re.sub(
+        r'("centroid_embedding":\s*\[\s*)([\s\S]*?)(\s*\])',
+        lambda m: f'"centroid_embedding": [{", ".join(x.strip() for x in m.group(2).split(",") if x.strip())}]',
+        raw_json
+    )
+    return compact_json
 
 
 def cosine_similarity(v1: List[float], v2: List[float]) -> float:
@@ -245,6 +246,69 @@ def process_timeline_workflow(
     clustered_segments, clusters = stitcher.cluster_segments(raw_segments)
     final_segments, stitched_seqs = stitcher.stitch_discontinuous_sequences(clustered_segments, clusters)
 
+    # 2.5 Neural CUDA Context Tracking & Resumption Resolution
+    doc_ctx_dict = None
+    try:
+        from src.hybrid_tracker import HybridWorkflowTracker
+        tracker = HybridWorkflowTracker()
+
+        workspace_root = Path(__file__).resolve().parent.parent
+        dossier_path = workspace_root / "data" / "context_dossiers" / f"{manifest.metadata.session_id}_dossier.json"
+        if dossier_path.exists():
+            with open(dossier_path, "r", encoding="utf-8") as f:
+                doc_ctx_dict = json.load(f)
+        else:
+            doc_ctx_dict = {
+                "project_title": f"Operational Workflow: {manifest.metadata.session_id}",
+                "prd_summary": "Interactive workstation session with multi-application task flow."
+            }
+
+        for i, seg in enumerate(final_segments):
+            s_text = (seg.summary_interaction or "").lower()
+            if "idle" in s_text or "static" in s_text or "no user interaction" in s_text:
+                cog = "IDLE_WAITING"
+            elif "reading" in s_text or "review" in s_text:
+                cog = "COGNITIVE_READING"
+            else:
+                cog = "ACTIVE_INTERACTION"
+
+            op = "KEYSTROKE_INPUT" if ("type" in s_text or "edit" in s_text) else "CLICK"
+
+            curr_action = {
+                "category": seg.primary_application,
+                "subroutine": seg.summary_interaction,
+                "segment_id": seg.segment_id,
+                "cognitive_state": cog,
+                "action": {"target": seg.primary_window, "operator": op}
+            }
+            lookahead = None
+            if i + 1 < len(final_segments):
+                nxt = final_segments[i + 1]
+                lookahead = {
+                    "category": nxt.primary_application,
+                    "subroutine": nxt.summary_interaction,
+                    "action": {"target": nxt.primary_window, "operator": "CLICK"}
+                }
+
+            app_ch = (lookahead["category"] != curr_action["category"]) if lookahead else False
+            step_res = tracker.evaluate_step(
+                curr_action,
+                lookahead_action=lookahead,
+                document_context=doc_ctx_dict,
+                delta_t=0.78 if app_ch else 0.42,
+                hist_vel=0.65 if app_ch else 0.32,
+                app_changed=app_ch
+            )
+            seg.neural_transition_type = step_res.get("transition_type")
+            seg.continuation_probability = step_res.get("continuation_probability")
+            if step_res.get("transition_confidences"):
+                t_type = step_res.get("transition_type")
+                seg.neural_confidence = step_res["transition_confidences"].get(t_type, 0.95)
+            seg.resumed_segment_id = step_res.get("resumes_segment_id")
+    except Exception as e:
+        import logging
+        logging.getLogger("workflow_stitcher").warning(f"Neural tracking exception: {e}")
+
     # 3. Assemble Manifest
     workflow_manifest = SegmentedWorkflowManifest(
         session_id=manifest.metadata.session_id,
@@ -254,6 +318,7 @@ def process_timeline_workflow(
         total_segments=len(final_segments),
         total_clusters=len(clusters),
         total_stitched_sequences=len(stitched_seqs),
+        document_context=doc_ctx_dict,
         segments=final_segments,
         clusters=clusters,
         stitched_sequences=stitched_seqs,

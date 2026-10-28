@@ -1,0 +1,211 @@
+{
+  "synthetic_id": "synthetic_test_03",
+  "split": "test",
+  "total_duration_seconds": 360.0,
+  "document_context": {
+    "project_id": "PRJ-SYNTHETIC_TEST_03",
+    "project_title": "Blender & Excel & Vscode Enterprise Operational Workflow",
+    "prd_summary": "Cross-functional operational pipeline executing sequential and interleaved tasks across Blender, Excel, Vscode. Requires strict state continuity, rigorous verification of intermediate deliverables, and accurate tracking of task interruptions and resumptions.",
+    "business_unit": "Digital Operations & Technical Design",
+    "active_tickets": [
+      {
+        "ticket_id": "TICKET-BLEN-01",
+        "category": "blender",
+        "title": "Blender: Rig 3D Scene Geometry & Connect PBR Material Shaders",
+        "target_artifacts": [
+          "Scene_Asset_Rig.blend",
+          "Principled BSDF",
+          "3D Viewport"
+        ],
+        "acceptance_criteria": "Mesh normals unified, base color texture linked, transforms normalized.",
+        "priority": "Critical"
+      },
+      {
+        "ticket_id": "TICKET-EXCE-02",
+        "category": "excel",
+        "title": "Excel: Compute Cost Variance Ledger & Reconcile Material Bids",
+        "target_artifacts": [
+          "Cost_Estimation_Master.xlsx",
+          "Sheet: Materials_Cost",
+          "Formula Bar"
+        ],
+        "acceptance_criteria": "Variance column formulas compute without circular references, total budget balanced.",
+        "priority": "High"
+      },
+      {
+        "ticket_id": "TICKET-VSCO-03",
+        "category": "vscode",
+        "title": "Vscode: Validate Schema Models & Implement Unit Tests",
+        "target_artifacts": [
+          "src/schemas.py",
+          "tests/test_schema.py",
+          "terminal"
+        ],
+        "acceptance_criteria": "Guard clauses implemented, pytest passes 100% green without regressions.",
+        "priority": "High"
+      }
+    ],
+    "data_schemas": {
+      "blender": {
+        "primary_artifacts": [
+          "Scene_Asset_Rig.blend",
+          "Principled BSDF",
+          "3D Viewport"
+        ],
+        "validation_rule": "Mesh normals unified, base color texture linked, transforms normalized."
+      },
+      "excel": {
+        "primary_artifacts": [
+          "Cost_Estimation_Master.xlsx",
+          "Sheet: Materials_Cost",
+          "Formula Bar"
+        ],
+        "validation_rule": "Variance column formulas compute without circular references, total budget balanced."
+      },
+      "vscode": {
+        "primary_artifacts": [
+          "src/schemas.py",
+          "tests/test_schema.py",
+          "terminal"
+        ],
+        "validation_rule": "Guard clauses implemented, pytest passes 100% green without regressions."
+      }
+    },
+    "domain_constraints": [
+      "All intermediate work-in-progress must be saved before switching application contexts.",
+      "When an interruption occurs, the primary task state must be preserved and cleanly resumed.",
+      "Final outputs must be validated against ticket acceptance criteria."
+    ]
+  },
+  "segments": [
+    {
+      "segment_id": "seg_01",
+      "segment_index": 1,
+      "category": "vscode",
+      "start_time_s": 0.0,
+      "end_time_s": 120.0,
+      "duration_s": 120.0,
+      "governing_ticket_id": "TICKET-VSCO-03",
+      "governing_ticket_title": "Vscode: Validate Schema Models & Implement Unit Tests",
+      "contextual_role": "PRIMARY_OBJECTIVE",
+      "is_interruption": false,
+      "resumes_segment_id": null,
+      "resumed_in_segment_id": null,
+      "subroutine": "subroutine_vscode_test_run",
+      "initial_state_s0": {
+        "app": "VS Code",
+        "window": "terminal - Visual Studio Code",
+        "focused": "Integrated Terminal Prompt",
+        "content": "$ "
+      },
+      "action_a": {
+        "operator": "TERMINAL_COMMAND",
+        "target": "Integrated Terminal",
+        "payload": "pytest tests/test_schema.py -v",
+        "modifiers": [
+          "Enter"
+        ]
+      },
+      "outcome_state_s1": {
+        "app": "VS Code",
+        "window": "terminal - Visual Studio Code",
+        "focused": "Integrated Terminal Output",
+        "content": "15 passed in 0.8s",
+        "feedback": "All schema tests passing"
+      },
+      "cognitive_state": "ACTIVE_INTERACTION"
+    },
+    {
+      "segment_id": "seg_02",
+      "segment_index": 2,
+      "category": "excel",
+      "start_time_s": 120.0,
+      "end_time_s": 240.0,
+      "duration_s": 120.0,
+      "governing_ticket_id": "TICKET-EXCE-02",
+      "governing_ticket_title": "Excel: Compute Cost Variance Ledger & Reconcile Material Bids",
+      "contextual_role": "IN_CONTEXT_SUBROUTINE",
+      "is_interruption": false,
+      "resumes_segment_id": null,
+      "resumed_in_segment_id": null,
+      "subroutine": "subroutine_excel_formula_calc",
+      "initial_state_s0": {
+        "app": "Excel",
+        "window": "Cost_Estimation_Master.xlsx - Excel",
+        "focused": "Cell E24",
+        "content": "=SUM(E4:E23)"
+      },
+      "action_a": {
+        "operator": "KEYSTROKE_INPUT",
+        "target": "Cell F24",
+        "payload": "=E24-D24",
+        "modifiers": [
+          "Enter"
+        ]
+      },
+      "outcome_state_s1": {
+        "app": "Excel",
+        "window": "Cost_Estimation_Master.xlsx - Excel",
+        "focused": "Cell F25",
+        "content": "$12,450.00",
+        "feedback": "Variance calculation updated"
+      },
+      "cognitive_state": "ACTIVE_INTERACTION"
+    },
+    {
+      "segment_id": "seg_03",
+      "segment_index": 3,
+      "category": "blender",
+      "start_time_s": 240.0,
+      "end_time_s": 360.0,
+      "duration_s": 120.0,
+      "governing_ticket_id": "TICKET-BLEN-01",
+      "governing_ticket_title": "Blender: Rig 3D Scene Geometry & Connect PBR Material Shaders",
+      "contextual_role": "IN_CONTEXT_SUBROUTINE",
+      "is_interruption": false,
+      "resumes_segment_id": null,
+      "resumed_in_segment_id": null,
+      "subroutine": "subroutine_blender_shader_link",
+      "initial_state_s0": {
+        "app": "Blender",
+        "window": "Scene_Asset_Rig.blend - Blender",
+        "focused": "Shader Editor",
+        "content": "Principled BSDF & Image Texture nodes"
+      },
+      "action_a": {
+        "operator": "DRAG_DROP",
+        "target": "Shader Socket: Color",
+        "payload": "Connect to Base Color",
+        "modifiers": []
+      },
+      "outcome_state_s1": {
+        "app": "Blender",
+        "window": "Scene_Asset_Rig.blend - Blender",
+        "focused": "Shader Editor",
+        "content": "Noodle link established",
+        "feedback": "Material preview rendered with diffuse texture"
+      },
+      "cognitive_state": "ACTIVE_INTERACTION"
+    }
+  ],
+  "breakpoints": [
+    {
+      "time_s": 120.0,
+      "from_segment": "seg_01",
+      "to_segment": "seg_02",
+      "from_ticket": "TICKET-VSCO-03",
+      "to_ticket": "TICKET-EXCE-02",
+      "transition_type": "NEW_MACRO",
+      "context_rationale": "Transitioning from ticket TICKET-VSCO-03 to new objective TICKET-EXCE-02."
+    },
+    {
+      "time_s": 240.0,
+      "from_segment": "seg_02",
+      "to_segment": "seg_03",
+      "from_ticket": "TICKET-EXCE-02",
+      "to_ticket": "TICKET-BLEN-01",
+      "transition_type": "NEW_MACRO",
+      "context_rationale": "Transitioning from ticket TICKET-EXCE-02 to new objective TICKET-BLEN-01."
+    }
+  ]
+}

@@ -10,6 +10,7 @@ import json
 import mimetypes
 import argparse
 from pathlib import Path
+from typing import Any, Dict, Optional
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 

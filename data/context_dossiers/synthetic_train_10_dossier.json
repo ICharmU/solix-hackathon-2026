@@ -1,0 +1,75 @@
+{
+  "project_id": "PRJ-SYNTHETIC_TRAIN_10",
+  "project_title": "Blender & Salesforce & Vscode Enterprise Operational Workflow",
+  "prd_summary": "Cross-functional operational pipeline executing sequential and interleaved tasks across Blender, Salesforce, Vscode. Requires strict state continuity, rigorous verification of intermediate deliverables, and accurate tracking of task interruptions and resumptions.",
+  "business_unit": "Digital Operations & Technical Design",
+  "active_tickets": [
+    {
+      "ticket_id": "TICKET-BLEN-01",
+      "category": "blender",
+      "title": "Blender: Rig 3D Scene Geometry & Connect PBR Material Shaders",
+      "target_artifacts": [
+        "Scene_Asset_Rig.blend",
+        "Principled BSDF",
+        "3D Viewport"
+      ],
+      "acceptance_criteria": "Mesh normals unified, base color texture linked, transforms normalized.",
+      "priority": "Critical"
+    },
+    {
+      "ticket_id": "TICKET-SALE-02",
+      "category": "salesforce",
+      "title": "Salesforce: Advance Enterprise Deal Stage & Log Technical Scope",
+      "target_artifacts": [
+        "Opportunity: Enterprise Tenant Expansion",
+        "Chevron Stage Bar",
+        "Activity Timeline"
+      ],
+      "acceptance_criteria": "Deal moved to Proposal/Review stage, call notes and engineering deliverables logged.",
+      "priority": "High"
+    },
+    {
+      "ticket_id": "TICKET-VSCO-03",
+      "category": "vscode",
+      "title": "Vscode: Validate Schema Models & Implement Unit Tests",
+      "target_artifacts": [
+        "src/schemas.py",
+        "tests/test_schema.py",
+        "terminal"
+      ],
+      "acceptance_criteria": "Guard clauses implemented, pytest passes 100% green without regressions.",
+      "priority": "High"
+    }
+  ],
+  "data_schemas": {
+    "blender": {
+      "primary_artifacts": [
+        "Scene_Asset_Rig.blend",
+        "Principled BSDF",
+        "3D Viewport"
+      ],
+      "validation_rule": "Mesh normals unified, base color texture linked, transforms normalized."
+    },
+    "salesforce": {
+      "primary_artifacts": [
+        "Opportunity: Enterprise Tenant Expansion",
+        "Chevron Stage Bar",
+        "Activity Timeline"
+      ],
+      "validation_rule": "Deal moved to Proposal/Review stage, call notes and engineering deliverables logged."
+    },
+    "vscode": {
+      "primary_artifacts": [
+        "src/schemas.py",
+        "tests/test_schema.py",
+        "terminal"
+      ],
+      "validation_rule": "Guard clauses implemented, pytest passes 100% green without regressions."
+    }
+  },
+  "domain_constraints": [
+    "All intermediate work-in-progress must be saved before switching application contexts.",
+    "When an interruption occurs, the primary task state must be preserved and cleanly resumed.",
+    "Final outputs must be validated against ticket acceptance criteria."
+  ]
+}

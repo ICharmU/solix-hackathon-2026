@@ -3,7 +3,7 @@ Data schemas for multimodal temporal alignment, frame extraction, transcription,
 Tier 1 visual descriptors, and text embeddings.
 """
 
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
 
 class AudioSegment(BaseModel):
@@ -92,6 +92,12 @@ class TaskSegment(BaseModel):
     slots_count: int = Field(default=0, description="Number of 1-second frames in this segment")
     slot_timestamps: List[int] = Field(default_factory=list, description="List of timestamps contained in this segment")
 
+    # Neural CUDA Context Tracking Signals
+    neural_transition_type: Optional[str] = Field(default=None, description="Predicted transition type (NEW_MACRO, SUBROUTINE_SHIFT, RESUME)")
+    neural_confidence: Optional[float] = Field(default=None, description="Confidence score from TaskDifferentiationNet")
+    resumed_segment_id: Optional[str] = Field(default=None, description="Pointer to interrupted segment being resumed")
+    continuation_probability: Optional[float] = Field(default=None, description="TaskContinuationNet confidence score")
+
 
 class SubroutineCluster(BaseModel):
     """Cluster of semantically similar task segments across the session."""
@@ -123,6 +129,7 @@ class SegmentedWorkflowManifest(BaseModel):
     total_segments: int
     total_clusters: int
     total_stitched_sequences: int
+    document_context: Optional[Dict[str, Any]] = Field(default=None, description="Upfront project PRD, active tickets, schemas, and constraints")
     segments: List[TaskSegment] = Field(default_factory=list)
     clusters: List[SubroutineCluster] = Field(default_factory=list)
     stitched_sequences: List[StitchedSequence] = Field(default_factory=list)

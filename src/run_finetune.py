@@ -12,7 +12,10 @@ import json
 import argparse
 from pathlib import Path
 from typing import Dict, Any, List, Tuple
-import tiktoken
+try:
+    import tiktoken
+except ImportError:
+    tiktoken = None
 from dotenv import load_dotenv
 
 from src.config import BASE_DIR
@@ -28,7 +31,7 @@ MODEL_ID = "gpt-4o-mini-2024-07-18"
 COST_PER_MILLION_TOKENS = 3.00
 
 
-def validate_jsonl_file(file_path: Path, enc: tiktoken.Encoding) -> Tuple[bool, int, int, List[str]]:
+def validate_jsonl_file(file_path: Path, enc: Any) -> Tuple[bool, int, int, List[str]]:
     """
     Validates formatting, schema, and token limits of an OpenAI Fine-Tuning JSONL file.
     Returns: (is_valid, sample_count, total_tokens, error_list)

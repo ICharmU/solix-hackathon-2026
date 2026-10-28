@@ -1,0 +1,95 @@
+{
+  "project_id": "PRJ-SYNTHETIC_VAL_01",
+  "project_title": "Autocad & Blender & Excel & Salesforce Enterprise Operational Workflow",
+  "prd_summary": "Cross-functional operational pipeline executing sequential and interleaved tasks across Autocad, Blender, Excel, Salesforce. Requires strict state continuity, rigorous verification of intermediate deliverables, and accurate tracking of task interruptions and resumptions.",
+  "business_unit": "Digital Operations & Technical Design",
+  "active_tickets": [
+    {
+      "ticket_id": "TICKET-AUTO-01",
+      "category": "autocad",
+      "title": "Autocad: Draft Structural Wall Polylines & Calibrate Dimension Lines",
+      "target_artifacts": [
+        "FloorPlan_L2.dwg",
+        "WALLS layer",
+        "Annotate Ribbon"
+      ],
+      "acceptance_criteria": "Outer perimeter polylines enclosed, dimension tolerance under 0.05m.",
+      "priority": "Critical"
+    },
+    {
+      "ticket_id": "TICKET-BLEN-02",
+      "category": "blender",
+      "title": "Blender: Rig 3D Scene Geometry & Connect PBR Material Shaders",
+      "target_artifacts": [
+        "Scene_Asset_Rig.blend",
+        "Principled BSDF",
+        "3D Viewport"
+      ],
+      "acceptance_criteria": "Mesh normals unified, base color texture linked, transforms normalized.",
+      "priority": "High"
+    },
+    {
+      "ticket_id": "TICKET-EXCE-03",
+      "category": "excel",
+      "title": "Excel: Compute Cost Variance Ledger & Reconcile Material Bids",
+      "target_artifacts": [
+        "Cost_Estimation_Master.xlsx",
+        "Sheet: Materials_Cost",
+        "Formula Bar"
+      ],
+      "acceptance_criteria": "Variance column formulas compute without circular references, total budget balanced.",
+      "priority": "High"
+    },
+    {
+      "ticket_id": "TICKET-SALE-04",
+      "category": "salesforce",
+      "title": "Salesforce: Advance Enterprise Deal Stage & Log Technical Scope",
+      "target_artifacts": [
+        "Opportunity: Enterprise Tenant Expansion",
+        "Chevron Stage Bar",
+        "Activity Timeline"
+      ],
+      "acceptance_criteria": "Deal moved to Proposal/Review stage, call notes and engineering deliverables logged.",
+      "priority": "High"
+    }
+  ],
+  "data_schemas": {
+    "autocad": {
+      "primary_artifacts": [
+        "FloorPlan_L2.dwg",
+        "WALLS layer",
+        "Annotate Ribbon"
+      ],
+      "validation_rule": "Outer perimeter polylines enclosed, dimension tolerance under 0.05m."
+    },
+    "blender": {
+      "primary_artifacts": [
+        "Scene_Asset_Rig.blend",
+        "Principled BSDF",
+        "3D Viewport"
+      ],
+      "validation_rule": "Mesh normals unified, base color texture linked, transforms normalized."
+    },
+    "excel": {
+      "primary_artifacts": [
+        "Cost_Estimation_Master.xlsx",
+        "Sheet: Materials_Cost",
+        "Formula Bar"
+      ],
+      "validation_rule": "Variance column formulas compute without circular references, total budget balanced."
+    },
+    "salesforce": {
+      "primary_artifacts": [
+        "Opportunity: Enterprise Tenant Expansion",
+        "Chevron Stage Bar",
+        "Activity Timeline"
+      ],
+      "validation_rule": "Deal moved to Proposal/Review stage, call notes and engineering deliverables logged."
+    }
+  },
+  "domain_constraints": [
+    "All intermediate work-in-progress must be saved before switching application contexts.",
+    "When an interruption occurs, the primary task state must be preserved and cleanly resumed.",
+    "Final outputs must be validated against ticket acceptance criteria."
+  ]
+}

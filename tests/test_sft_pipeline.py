@@ -5,12 +5,18 @@ Unit Tests for SFT Dataset Preparation and Pre-Flight Validation.
 import json
 import unittest
 from pathlib import Path
-import tiktoken
+
+try:
+    import tiktoken
+    TIKTOKEN_AVAILABLE = True
+except ImportError:
+    TIKTOKEN_AVAILABLE = False
 
 from src.config import BASE_DIR
 from src.run_finetune import validate_jsonl_file, run_validation_and_cost_audit
 
 
+@unittest.skipUnless(TIKTOKEN_AVAILABLE, "tiktoken not installed in this environment")
 class TestSFTPipeline(unittest.TestCase):
     """Test suite covering SFT dataset preparation and OpenAI pre-flight audit."""
 

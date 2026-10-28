@@ -1,0 +1,75 @@
+{
+  "project_id": "PRJ-SYNTHETIC_VAL_04",
+  "project_title": "Autocad & Salesforce & Vscode Enterprise Operational Workflow",
+  "prd_summary": "Cross-functional operational pipeline executing sequential and interleaved tasks across Autocad, Salesforce, Vscode. Requires strict state continuity, rigorous verification of intermediate deliverables, and accurate tracking of task interruptions and resumptions.",
+  "business_unit": "Digital Operations & Technical Design",
+  "active_tickets": [
+    {
+      "ticket_id": "TICKET-AUTO-01",
+      "category": "autocad",
+      "title": "Autocad: Draft Structural Wall Polylines & Calibrate Dimension Lines",
+      "target_artifacts": [
+        "FloorPlan_L2.dwg",
+        "WALLS layer",
+        "Annotate Ribbon"
+      ],
+      "acceptance_criteria": "Outer perimeter polylines enclosed, dimension tolerance under 0.05m.",
+      "priority": "Critical"
+    },
+    {
+      "ticket_id": "TICKET-SALE-02",
+      "category": "salesforce",
+      "title": "Salesforce: Advance Enterprise Deal Stage & Log Technical Scope",
+      "target_artifacts": [
+        "Opportunity: Enterprise Tenant Expansion",
+        "Chevron Stage Bar",
+        "Activity Timeline"
+      ],
+      "acceptance_criteria": "Deal moved to Proposal/Review stage, call notes and engineering deliverables logged.",
+      "priority": "High"
+    },
+    {
+      "ticket_id": "TICKET-VSCO-03",
+      "category": "vscode",
+      "title": "Vscode: Validate Schema Models & Implement Unit Tests",
+      "target_artifacts": [
+        "src/schemas.py",
+        "tests/test_schema.py",
+        "terminal"
+      ],
+      "acceptance_criteria": "Guard clauses implemented, pytest passes 100% green without regressions.",
+      "priority": "High"
+    }
+  ],
+  "data_schemas": {
+    "autocad": {
+      "primary_artifacts": [
+        "FloorPlan_L2.dwg",
+        "WALLS layer",
+        "Annotate Ribbon"
+      ],
+      "validation_rule": "Outer perimeter polylines enclosed, dimension tolerance under 0.05m."
+    },
+    "salesforce": {
+      "primary_artifacts": [
+        "Opportunity: Enterprise Tenant Expansion",
+        "Chevron Stage Bar",
+        "Activity Timeline"
+      ],
+      "validation_rule": "Deal moved to Proposal/Review stage, call notes and engineering deliverables logged."
+    },
+    "vscode": {
+      "primary_artifacts": [
+        "src/schemas.py",
+        "tests/test_schema.py",
+        "terminal"
+      ],
+      "validation_rule": "Guard clauses implemented, pytest passes 100% green without regressions."
+    }
+  },
+  "domain_constraints": [
+    "All intermediate work-in-progress must be saved before switching application contexts.",
+    "When an interruption occurs, the primary task state must be preserved and cleanly resumed.",
+    "Final outputs must be validated against ticket acceptance criteria."
+  ]
+}
