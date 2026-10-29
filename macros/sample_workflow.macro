@@ -3,3 +3,4 @@
 /click "ocr_engine.py"
 /wait 0.5s
 /press ctrl+s
+

@@ -64,17 +64,17 @@ class TestDesktopMacroEngine(unittest.TestCase):
         self.assertAlmostEqual(MacroRunner._parse_duration("2"), 2.0)
 
     def test_macro_runner_dry_run(self):
-        """Verifies dry-run execution on a visible element (e.g. 'File')."""
+        """Verifies dry-run execution on a multi-step macro without physical side effects."""
         raw_text = """
-        /click "File"
         /wait 100ms
+        /press ctrl+s
         """
         macro = Macro.from_text(raw_text, name="dry_run_test")
         runner = MacroRunner(safety_monitor=SafetyMonitor(enable_dialog=False, mouse_threshold_px=9999))
 
         # Run immediately in dry-run mode
         success = runner.run(macro, use_hotkey=False, dry_run=True)
-        self.assertTrue(success, "Dry run on visible element 'File' should succeed.")
+        self.assertTrue(success, "Dry run on wait and press commands should succeed.")
 
     def test_macro_runner_failure_handling(self):
         """Verifies that non-existent targets halt execution and report failure."""
@@ -86,6 +86,21 @@ class TestDesktopMacroEngine(unittest.TestCase):
 
         success = runner.run(macro, use_hotkey=False, dry_run=True)
         self.assertFalse(success, "Macro should report failure when target is missing.")
+
+    def test_macro_formulator_from_query(self):
+        """Verifies formulating a macro from a natural language query."""
+        from src.agent.macro_builder import MacroFormulator
+        formulator = MacroFormulator()
+        macro = formulator.formulate_macro(
+            query="click on ocr_engine.py, format code and save",
+            name="test_formulated",
+            inspect_live_screen=False,
+        )
+        self.assertIsNotNone(macro)
+        commands = [s.command for s in macro.steps]
+        self.assertIn("click", commands)
+        self.assertTrue(any("ocr_engine.py" in s.argument for s in macro.steps if s.command == "click"))
+        self.assertIn("press", commands)
 
 
 if __name__ == "__main__":

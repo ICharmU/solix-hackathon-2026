@@ -141,17 +141,20 @@ class SafetyMonitor:
         print(f"\n{banner}\n[SAFETY HALT] {message}\n{banner}\n", flush=True)
 
         if self.enable_dialog:
-            # Non-blocking Windows Notification popup in background thread
+            # Auto-closing Windows Alert popup in background thread (closes after 2.5s)
             def _popup():
                 try:
                     # MB_OK | MB_ICONWARNING | MB_TOPMOST | MB_SETFOREGROUND
                     MB_TOPMOST = 0x00040000
                     MB_ICONWARNING = 0x00000030
-                    ctypes.windll.user32.MessageBoxW(
+                    # MessageBoxTimeoutW automatically dismisses after 2500ms
+                    ctypes.windll.user32.MessageBoxTimeoutW(
                         0,
                         message,
                         "Safety Alert",
                         MB_TOPMOST | MB_ICONWARNING,
+                        0,
+                        2500,
                     )
                 except Exception:
                     pass

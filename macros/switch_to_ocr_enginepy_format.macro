@@ -1,0 +1,6 @@
+# Macro: switch_to_ocr_enginepy_format
+/click "ocr_engine.py"
+/wait 0.3s
+/press ctrl+shift+i
+/wait 0.2s
+/press ctrl+s

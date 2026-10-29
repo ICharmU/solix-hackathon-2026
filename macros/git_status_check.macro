@@ -1,0 +1,5 @@
+# Macro: git_status_check
+/click "Run"
+/wait 0.3s
+/click "Terminal"
+/wait 0.3s

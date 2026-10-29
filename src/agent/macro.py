@@ -317,6 +317,14 @@ def main():
     new_parser = subparsers.add_parser("new", help="Create a sample template macro")
     new_parser.add_argument("macro_name", type=str, help="Name for the new macro")
 
+    # 'ask' / 'create' subcommand
+    ask_parser = subparsers.add_parser("ask", help="Formulate a new macro from a natural language query")
+    ask_parser.add_argument("query", type=str, help="Natural language description of what the macro should do")
+    ask_parser.add_argument("--name", "-n", type=str, default=None, help="Custom name for the macro file")
+    ask_parser.add_argument("--run", action="store_true", help="Immediately run the macro after generating it")
+    ask_parser.add_argument("--now", action="store_true", help="When running, execute immediately without waiting for Ctrl+T+H")
+    ask_parser.add_argument("--dry-run", action="store_true", help="Simulate without dispatching physical clicks")
+
     # 'list' subcommand
     subparsers.add_parser("list", help="List all available macros in macros/")
 
@@ -352,6 +360,27 @@ def main():
         print("\nYou can edit this file in any text editor, then run it with:")
         print(f"  pixi run macro run {target}")
 
+    elif args.subcommand in ("ask", "create"):
+        from src.agent.macro_builder import MacroFormulator
+        formulator = MacroFormulator()
+        print(f"\n[AI FORMULATOR] Analyzing query: '{args.query}'...")
+        print("                Scanning live screen for active UI anchors...")
+        macro = formulator.formulate_macro(query=args.query, name=args.name, inspect_live_screen=True)
+        macro.save()
+        print(f"\n[FORMULATED] Macro saved to: {macro.file_path}\n")
+        print("=" * 60)
+        print(macro.to_text())
+        print("=" * 60)
+
+        if args.run:
+            runner = MacroRunner()
+            success = runner.run(macro, use_hotkey=(not args.now), dry_run=args.dry_run)
+            sys.exit(0 if success else 1)
+        else:
+            print("\nTo run this macro:")
+            print(f"  pixi run macro run {macro.file_path.name}")
+            print("\nYou can also open the file to tweak any line or timing.\n")
+
     elif args.subcommand == "list":
         MACROS_DIR.mkdir(parents=True, exist_ok=True)
         files = list(MACROS_DIR.glob("*.macro"))
@@ -368,3 +397,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
