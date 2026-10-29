@@ -96,12 +96,18 @@ class TaskReplicator:
                 return False
 
             # Capture current screen
-            current_screenshot = TEMP_DIR / "current_screen_recon.png"
+            current_screenshot = TEMP_DIR / "current_screen_recon.jpg"
             screen_img = ImageGrab.grab()
-            screen_img.save(current_screenshot)
+            screen_img.save(current_screenshot, format="JPEG", quality=85)
+
+            # Check safety before OCR
+            self.safety_monitor.check_or_raise()
 
             # OCR scan current screen
             boxes = self.ocr_engine.recognize_image(current_screenshot)
+
+            # Check safety after OCR
+            self.safety_monitor.check_or_raise()
             target_coords = self.ocr_engine.locate_target(step.anchor, boxes)
 
             if target_coords is None:
@@ -115,11 +121,12 @@ class TaskReplicator:
             logger.info(f"Target located at ({click_x}, {click_y}) for text '{step.anchor.target_text}'.")
 
             if not dry_run:
-                # Update agent cursor baseline so safety monitor doesn't flag agent's own movement
-                self.safety_monitor.update_agent_cursor(click_x, click_y)
+                self.safety_monitor.pause_for_agent_action()
                 is_double = (step.action_type == "DOUBLE_CLICK")
                 btn = "right" if step.action_type == "RIGHT_CLICK" else "left"
                 VirtualInput.mouse_click(click_x, click_y, button=btn, double=is_double)
+                time.sleep(0.05)
+                self.safety_monitor.resume_after_agent_action()
 
             return True
 

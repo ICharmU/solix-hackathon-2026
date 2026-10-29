@@ -46,6 +46,9 @@ dashboard = "python -m src.dashboard_generator"
 serve = "python -m src.web.app --port 8000"
 test-automations = "python -m unittest tests/test_phase5_automations.py"
 pipeline = "python -m src.main"
+act = "python -m src.agent.cli"
+agent = "python -m src.agent.cli"
+macro = "python -m src.agent.macro"
 
 [dependencies]
 python = ">=3.15.2,<3.16"

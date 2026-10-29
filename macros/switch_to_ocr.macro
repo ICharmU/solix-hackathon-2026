@@ -1,0 +1,3 @@
+# Macro: switch_to_ocr
+# Switches to the ocr_engine.py tab in Antigravity IDE
+/click "ocr_engine.py"

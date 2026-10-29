@@ -49,7 +49,14 @@ class WindowsOCREngine:
         ]
 
         try:
-            res = subprocess.run(cmd, capture_output=True, text=True, check=True)
+            res = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                check=True,
+                stdin=subprocess.DEVNULL,
+                timeout=15.0,
+            )
             output = res.stdout.strip()
             if not output:
                 return []
@@ -170,12 +177,14 @@ class WindowsOCREngine:
                         avg_center_y + anchor.click_offset_from_center[1],
                     )
 
-        # 3. Partial / case-insensitive containment match
-        for box in boxes:
-            box_text = box.text.strip().lower()
-            if target_text in box_text or box_text in target_text:
-                click_x = box.center_x + anchor.click_offset_from_center[0]
-                click_y = box.center_y + anchor.click_offset_from_center[1]
-                return click_x, click_y
+        # 3. Partial containment match (target string is inside the box text)
+        if not anchor.exact_match and len(target_text) >= 2:
+            for box in boxes:
+                box_text = box.text.strip().lower()
+                if target_text in box_text:
+                    click_x = box.center_x + anchor.click_offset_from_center[0]
+                    click_y = box.center_y + anchor.click_offset_from_center[1]
+                    return click_x, click_y
 
         return None
+

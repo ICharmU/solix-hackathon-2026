@@ -12,6 +12,7 @@ data/audio/
 data/processed/
 data/test_fixtures/
 data/artifacts/
+data/cache/
 data/*.mp4
 data/*.mkv
 data/*.wav

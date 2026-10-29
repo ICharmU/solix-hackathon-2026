@@ -57,3 +57,4 @@ class TaskTrajectory(BaseModel):
     recorded_at: str
     screen_resolution: Tuple[int, int]
     steps: List[ReplicatedAction] = Field(default_factory=list)
+

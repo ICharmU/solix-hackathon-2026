@@ -10,6 +10,21 @@ from typing import List, Optional
 
 user32 = ctypes.windll.user32
 
+
+def enable_dpi_awareness():
+    """Sets Per-Monitor DPI awareness on Windows so cursor coordinates match physical screenshot pixels."""
+    try:
+        ctypes.windll.shcore.SetProcessDpiAwareness(2)
+    except Exception:
+        try:
+            ctypes.windll.user32.SetProcessDPIAware()
+        except Exception:
+            pass
+
+
+# Enable DPI awareness immediately on import
+enable_dpi_awareness()
+
 # Mouse event constants
 MOUSEEVENTF_MOVE = 0x0001
 MOUSEEVENTF_LEFTDOWN = 0x0002
@@ -127,3 +142,4 @@ class VirtualInput:
         for vk in reversed(vk_codes):
             user32.keybd_event(vk, 0, KEYEVENTF_KEYUP, 0)
             time.sleep(0.02)
+

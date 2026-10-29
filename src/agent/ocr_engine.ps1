@@ -34,7 +34,8 @@ $bytes = [System.IO.File]::ReadAllBytes($ImagePath)
 $inMemStream = [Windows.Storage.Streams.InMemoryRandomAccessStream]::new()
 $writer = [Windows.Storage.Streams.DataWriter]::new($inMemStream)
 $writer.WriteBytes($bytes)
-$null = $writer.StoreAsync().GetResults()
+$storeTask = $writer.StoreAsync()
+$null = Invoke-Async $storeTask ([System.UInt32])
 $writer.DetachStream() | Out-Null
 $inMemStream.Seek(0)
 
@@ -79,3 +80,4 @@ if ($OutputPath -ne "") {
 }
 
 [Console]::WriteLine($json)
+

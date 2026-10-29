@@ -74,9 +74,9 @@ class TaskRecorder:
         self._step_counter += 1
 
         # Capture pre-action screenshot
-        screenshot_path = SCREENSHOTS_DIR / f"{self.current_trajectory.task_name}_step_{self._step_counter:03d}.png"
+        screenshot_path = SCREENSHOTS_DIR / f"{self.current_trajectory.task_name}_step_{self._step_counter:03d}.jpg"
         img = ImageGrab.grab()
-        img.save(screenshot_path)
+        img.save(screenshot_path, format="JPEG", quality=85)
 
         # Run OCR to locate target text
         boxes = self.ocr_engine.recognize_image(screenshot_path)
@@ -149,3 +149,4 @@ class TaskRecorder:
 
         logger.info(f"Saved task trajectory ({len(self.current_trajectory.steps)} steps) to {output_path}")
         return output_path
+

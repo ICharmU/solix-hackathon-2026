@@ -18,8 +18,13 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, List, Tuple, Optional
 import numpy as np
-import torch
-from torch.utils.data import Dataset, DataLoader
+try:
+    import torch
+    from torch.utils.data import Dataset, DataLoader
+except ImportError:
+    torch = None
+    Dataset = object
+    DataLoader = None
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")
 logger = logging.getLogger("dataset_builder")

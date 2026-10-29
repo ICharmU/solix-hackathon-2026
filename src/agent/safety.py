@@ -50,6 +50,7 @@ class SafetyMonitor:
 
         self._baseline_x = 0
         self._baseline_y = 0
+        self._agent_acting = False
 
     @property
     def is_halted(self) -> bool:
@@ -88,6 +89,20 @@ class SafetyMonitor:
         with self._lock:
             self._armed = False
         logger.info("SafetyMonitor disarmed.")
+
+    def pause_for_agent_action(self):
+        """Temporarily pauses mouse displacement checks while the agent moves or clicks."""
+        with self._lock:
+            self._agent_acting = True
+
+    def resume_after_agent_action(self):
+        """Resumes displacement checks, updating baseline to current physical cursor position."""
+        with self._lock:
+            pt = POINT()
+            self._user32.GetCursorPos(ctypes.byref(pt))
+            self._baseline_x = pt.x
+            self._baseline_y = pt.y
+            self._agent_acting = False
 
     def update_agent_cursor(self, new_x: int, new_y: int):
         """
@@ -150,9 +165,10 @@ class SafetyMonitor:
             with self._lock:
                 if not self._armed:
                     break
+                agent_acting = self._agent_acting
 
-            # 1. Check mouse displacement
-            if self._user32.GetCursorPos(ctypes.byref(pt)):
+            # 1. Check mouse displacement (only when agent is not actively moving the mouse)
+            if not agent_acting and self._user32.GetCursorPos(ctypes.byref(pt)):
                 with self._lock:
                     dx = abs(pt.x - self._baseline_x)
                     dy = abs(pt.y - self._baseline_y)
