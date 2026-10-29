@@ -1,0 +1,20 @@
+# Macro: edit_the_first_3
+/macro "open_pixi"
+/wait 0.3s
+/click "platforms"
+/press end
+/press left
+/type "new_header_1"
+/press end
+/press left
+/type "new_header_2"
+/press end
+/press left
+/type "new_header_3"
+/press end
+/press left
+/type "observation_1_1"
+/press end
+/press left
+/type "observation_1_2"
+/press ctrl+s

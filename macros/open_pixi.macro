@@ -1,0 +1,5 @@
+# Macro: open_pixi
+/openfile "pixi.toml"
+/wait 0.3s
+/interact
+/wait 0.2s

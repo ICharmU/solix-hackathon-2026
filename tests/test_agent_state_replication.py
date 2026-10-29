@@ -130,6 +130,16 @@ class TestAgentStateReplication(unittest.TestCase):
             monitor.check_or_raise()
         self.assertIn("user input received. program halting", str(ctx.exception))
 
+    def test_safety_monitor_pause_for_agent_action(self):
+        """Verifies that the safety monitor tracks agent acting state without physical mouse interference."""
+        monitor = SafetyMonitor(enable_dialog=False)
+        monitor.pause_for_agent_action()
+        self.assertTrue(monitor._agent_acting)
+
+        monitor.resume_after_agent_action()
+        self.assertFalse(monitor._agent_acting)
+        self.assertFalse(monitor.is_halted)
+
     def test_replicator_dry_run_and_safety_abort(self):
         """Verifies replicator handles trajectory execution and halts on user intervention."""
         monitor = SafetyMonitor()

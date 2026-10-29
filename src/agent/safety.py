@@ -31,7 +31,7 @@ class SafetyMonitor:
 
     def __init__(
         self,
-        mouse_threshold_px: int = 6,
+        mouse_threshold_px: int = 15,
         poll_interval_s: float = 0.01,
         enable_dialog: bool = False,
         on_halt_callback: Optional[Callable[[str], None]] = None,
@@ -91,12 +91,20 @@ class SafetyMonitor:
         logger.info("SafetyMonitor disarmed.")
 
     def pause_for_agent_action(self):
-        """Temporarily pauses mouse displacement checks while the agent moves or clicks."""
+        """Temporarily pauses mouse and keyboard monitoring while the agent dispatches programmatic inputs."""
         with self._lock:
             self._agent_acting = True
 
-    def resume_after_agent_action(self):
-        """Resumes displacement checks, updating baseline to current physical cursor position."""
+    def resume_after_agent_action(self, settle_delay_s: float = 0.05):
+        """
+        Resumes displacement and keystroke checks, updating baseline to current physical cursor position
+        and clearing residual asynchronous key state left by the agent's keystrokes.
+        """
+        time.sleep(settle_delay_s)
+        # Flush all virtual keys so any pressed bit from the agent's typing is cleared
+        for vkey in range(1, 256):
+            self._user32.GetAsyncKeyState(vkey)
+
         with self._lock:
             pt = POINT()
             self._user32.GetCursorPos(ctypes.byref(pt))
@@ -170,8 +178,13 @@ class SafetyMonitor:
                     break
                 agent_acting = self._agent_acting
 
-            # 1. Check mouse displacement (only when agent is not actively moving the mouse)
-            if not agent_acting and self._user32.GetCursorPos(ctypes.byref(pt)):
+            # Skip all checks while the agent is actively moving, clicking, or typing
+            if agent_acting:
+                time.sleep(self.poll_interval_s)
+                continue
+
+            # 1. Check physical mouse displacement
+            if self._user32.GetCursorPos(ctypes.byref(pt)):
                 with self._lock:
                     dx = abs(pt.x - self._baseline_x)
                     dy = abs(pt.y - self._baseline_y)
@@ -180,9 +193,8 @@ class SafetyMonitor:
                         self.trigger_halt("user input received. program halting")
                         break
 
-            # 2. Check all physical keyboard virtual keys (0x01 to 0xFE)
-            # Skip left/right click here since mouse movement handles it, but check keyboard keys
-            # VK_CANCEL=0x03 to VK_OEM_CLEAR=0xFE
+            # 2. Check all physical keyboard virtual keys (0x08 to 0xFE)
+            # Skip left/right mouse click here since mouse movement handles it, but check keyboard keys
             for vkey in range(0x08, 0xFF):
                 state = self._user32.GetAsyncKeyState(vkey)
                 if state & 0x8000:

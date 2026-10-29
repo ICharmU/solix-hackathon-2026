@@ -102,6 +102,62 @@ class TestDesktopMacroEngine(unittest.TestCase):
         self.assertTrue(any("ocr_engine.py" in s.argument for s in macro.steps if s.command == "click"))
         self.assertIn("press", commands)
 
+    def test_macro_composition_and_nested_execution(self):
+        """Verifies macro composition where a parent macro invokes sub-macros."""
+        from src.agent.macro import MACROS_DIR
+        sub_path = MACROS_DIR / "test_sub.macro"
+        sub_text = """# Macro: test_sub
+/wait 50ms
+/press esc
+"""
+        sub_path.write_text(sub_text, encoding="utf-8")
+        try:
+            parent_text = """# Macro: test_parent
+/macro "test_sub"
+/wait 50ms
+"""
+            parent = Macro.from_text(parent_text, name="test_parent")
+            runner = MacroRunner(safety_monitor=SafetyMonitor(enable_dialog=False, mouse_threshold_px=9999))
+            success = runner.run(parent, use_hotkey=False, dry_run=True)
+            self.assertTrue(success, "Composed macro execution should succeed in dry-run.")
+        finally:
+            if sub_path.exists():
+                sub_path.unlink()
+
+    def test_macro_formulator_pixi_composition(self):
+        """Verifies formulating a coding macro that navigates to a file and setting."""
+        from src.agent.macro_builder import MacroFormulator
+        formulator = MacroFormulator()
+        macro = formulator.formulate_macro(
+            query="add linux as a platform for the pixi environment",
+            name="test_pixi_formulation",
+            inspect_live_screen=False,
+        )
+        commands = [s.command for s in macro.steps]
+        self.assertTrue("macro" in commands or "openfile" in commands)
+        self.assertTrue("gotoline" in commands or "findtext" in commands)
+        self.assertIn("type", commands)
+        self.assertIn("press", commands)
+
+        # Check serialization quotes
+        serialized = macro.to_text()
+        self.assertTrue("/gotoline" in serialized or "/findtext" in serialized)
+        self.assertIn("linux-64", serialized)
+
+    def test_macro_refinement(self):
+        """Verifies refining a macro based on user feedback."""
+        from src.agent.macro_builder import MacroFormulator
+        formulator = MacroFormulator()
+        raw_text = """# Macro: sample_refine
+/macro "open_pixi"
+/findtext "platforms ="
+/press end
+"""
+        existing = Macro.from_text(raw_text, name="sample_refine")
+        refined = formulator.refine_macro(existing, feedback="use gotoline to jump directly to where to write")
+        commands = [s.command for s in refined.steps]
+        self.assertIn("gotoline", commands)
+
 
 if __name__ == "__main__":
     unittest.main()

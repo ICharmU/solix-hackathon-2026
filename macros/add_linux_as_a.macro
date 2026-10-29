@@ -1,8 +1,7 @@
 # Macro: add_linux_as_a
-/click "pixi.toml"
-/wait 0.3s
-/type "linux"
-/wait 0.3s
-/press enter
-/wait 0.3s
-/assert "linux"
+/macro "open_pixi"
+/gotoline 4
+/press end
+/press left
+/type ', "linux-64"'
+/press ctrl+s

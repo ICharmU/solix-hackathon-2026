@@ -1,0 +1,8 @@
+# Macro: add_linux64_as_a
+/macro "open_pixi"
+/wait 0.3s
+/click "platforms"
+/press end
+/press left
+/type ', "linux-64"'
+/press ctrl+s

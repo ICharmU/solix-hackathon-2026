@@ -109,8 +109,13 @@ class Macro:
     def to_text(self) -> str:
         lines = [f"# Macro: {self.name}"]
         for step in self.steps:
-            if step.command in ("click", "doubleclick", "rightclick", "hover", "assert", "type"):
-                lines.append(f"/{step.command} \"{step.argument}\"")
+            if step.command in ("click", "doubleclick", "rightclick", "hover", "assert", "type", "openfile", "findtext", "macro", "call", "include"):
+                if (step.argument.startswith('"') and step.argument.endswith('"')) or (step.argument.startswith("'") and step.argument.endswith("'")):
+                    lines.append(f"/{step.command} {step.argument}")
+                elif '"' in step.argument and "'" not in step.argument:
+                    lines.append(f"/{step.command} '{step.argument}'")
+                else:
+                    lines.append(f'/{step.command} "{step.argument}"')
             else:
                 lines.append(f"/{step.command} {step.argument}")
         return "\n".join(lines) + "\n"
@@ -268,6 +273,124 @@ class MacroRunner:
             time.sleep(duration)
             return True
 
+        elif cmd == "openfile":
+            # Quick-open file via Ctrl+P in VS Code / Antigravity IDE
+            print(f"      [OPEN FILE] Quick-opening '{arg}'...")
+            if not dry_run:
+                self.safety_monitor.pause_for_agent_action()
+                VirtualInput.send_key_combo(["ctrl", "p"])
+                time.sleep(0.3)
+                VirtualInput.type_text(arg)
+                time.sleep(0.2)
+                VirtualInput.send_key_combo(["enter"])
+                time.sleep(0.5)
+
+                # Interact with the new environment to establish keyboard focus
+                import ctypes
+                sys_w = ctypes.windll.user32.GetSystemMetrics(0)
+                sys_h = ctypes.windll.user32.GetSystemMetrics(1)
+                focus_x = int(sys_w * 0.45)
+                focus_y = int(sys_h * 0.40)
+                print(f"      [INTERACT ENVIRONMENT] Clicking into newly opened file editor at ({focus_x}, {focus_y})...")
+                VirtualInput.mouse_click(focus_x, focus_y, button="left")
+                time.sleep(0.25)
+
+                self.safety_monitor.resume_after_agent_action()
+            return True
+
+        elif cmd in ("focus", "interact", "clickfile"):
+            # Explicitly clicks into the active editor buffer to interact with the environment
+            print("      [INTERACT ENVIRONMENT] Clicking into active file editor to focus buffer...")
+            if not dry_run:
+                self.safety_monitor.pause_for_agent_action()
+                import ctypes
+                sys_w = ctypes.windll.user32.GetSystemMetrics(0)
+                sys_h = ctypes.windll.user32.GetSystemMetrics(1)
+                focus_x = int(sys_w * 0.45)
+                focus_y = int(sys_h * 0.40)
+                VirtualInput.mouse_click(focus_x, focus_y, button="left")
+                time.sleep(0.25)
+                self.safety_monitor.resume_after_agent_action()
+            return True
+
+        elif cmd == "findtext":
+            # In-file search via Ctrl+F, positions cursor on match
+            print(f"      [FIND IN FILE] Searching for '{arg}' and positioning cursor...")
+            if not dry_run:
+                self.safety_monitor.pause_for_agent_action()
+                VirtualInput.send_key_combo(["ctrl", "f"])
+                time.sleep(0.2)
+                VirtualInput.type_text(arg)
+                time.sleep(0.2)
+                VirtualInput.send_key_combo(["enter"])
+                time.sleep(0.1)
+                VirtualInput.send_key_combo(["esc"])  # Dismiss find bar, cursor stays on match
+                time.sleep(0.1)
+                self.safety_monitor.resume_after_agent_action()
+            return True
+
+        elif cmd == "replace":
+            # Search and replace in current file via Ctrl+H
+            parts = re.findall(r'"([^"]*)"|\'([^\']*)\'|(\S+)', arg)
+            extracted = [p[0] or p[1] or p[2] for p in parts]
+            if len(extracted) < 2:
+                print("      [ERROR] /replace requires two arguments: /replace \"old\" \"new\"")
+                return False
+            old_text, new_text = extracted[0], extracted[1]
+            print(f"      [REPLACE] Replacing '{old_text}' with '{new_text}'...")
+            if not dry_run:
+                self.safety_monitor.pause_for_agent_action()
+                VirtualInput.send_key_combo(["ctrl", "h"])
+                time.sleep(0.3)
+                VirtualInput.type_text(old_text)
+                time.sleep(0.15)
+                VirtualInput.send_key_combo(["tab"])
+                time.sleep(0.15)
+                VirtualInput.type_text(new_text)
+                time.sleep(0.15)
+                VirtualInput.send_key_combo(["ctrl", "alt", "enter"])
+                time.sleep(0.2)
+                VirtualInput.send_key_combo(["esc"])
+                time.sleep(0.1)
+                self.safety_monitor.resume_after_agent_action()
+            return True
+
+        elif cmd in ("gotoline", "line"):
+            print(f"      [GOTO LINE] Jumping to line {arg}...")
+            if not dry_run:
+                self.safety_monitor.pause_for_agent_action()
+                VirtualInput.send_key_combo(["ctrl", "g"])
+                time.sleep(0.3)
+                VirtualInput.type_text(str(arg))
+                time.sleep(0.15)
+                VirtualInput.send_key_combo(["enter"])
+                time.sleep(0.25)
+                self.safety_monitor.resume_after_agent_action()
+            return True
+
+        elif cmd in ("macro", "call", "include"):
+            # Composable sub-macro invocation
+            sub_arg = arg.strip()
+            sub_path = Path(sub_arg)
+            if not sub_path.is_file():
+                if not sub_arg.endswith(".macro"):
+                    sub_arg += ".macro"
+                sub_path = MACROS_DIR / sub_arg
+                if not sub_path.is_file():
+                    sub_path = MACROS_DIR / Path(sub_arg).name
+
+            if not sub_path.exists():
+                print(f"      [ERROR] Composed sub-macro not found: {sub_path}")
+                return False
+            print(f"      ==> Composing sub-macro '{sub_path.name}'...")
+            sub_macro = Macro.from_file(sub_path)
+            for sub_step in sub_macro.steps:
+                self.safety_monitor.check_or_raise()
+                ok = self._execute_step(sub_step, dry_run=dry_run)
+                if not ok:
+                    return False
+            return True
+
         elif cmd == "assert":
             # Verifies that text is currently visible on screen
             screenshot_path = CACHE_DIR / "macro_live_screen.jpg"
@@ -325,6 +448,14 @@ def main():
     ask_parser.add_argument("--now", action="store_true", help="When running, execute immediately without waiting for Ctrl+T+H")
     ask_parser.add_argument("--dry-run", action="store_true", help="Simulate without dispatching physical clicks")
 
+    # 'refine' subcommand
+    refine_parser = subparsers.add_parser("refine", help="Refine an existing macro using natural language feedback")
+    refine_parser.add_argument("macro_path", type=str, help="Path or name of the .macro file to refine")
+    refine_parser.add_argument("feedback", type=str, help="Instructions on what to adjust or fix")
+    refine_parser.add_argument("--run", action="store_true", help="Immediately run the macro after refining it")
+    refine_parser.add_argument("--now", action="store_true", help="When running, execute immediately without waiting for Ctrl+T+H")
+    refine_parser.add_argument("--dry-run", action="store_true", help="Simulate without dispatching physical clicks")
+
     # 'list' subcommand
     subparsers.add_parser("list", help="List all available macros in macros/")
 
@@ -380,6 +511,34 @@ def main():
             print("\nTo run this macro:")
             print(f"  pixi run macro run {macro.file_path.name}")
             print("\nYou can also open the file to tweak any line or timing.\n")
+
+    elif args.subcommand == "refine":
+        p = Path(args.macro_path)
+        if not p.exists() and not p.suffix:
+            p = MACROS_DIR / f"{args.macro_path}.macro"
+
+        if not p.exists():
+            print(f"[ERROR] Macro not found: {p}")
+            sys.exit(1)
+
+        from src.agent.macro_builder import MacroFormulator
+        formulator = MacroFormulator()
+        existing_macro = Macro.from_file(p)
+        print(f"\n[AI REFINE] Refining macro '{existing_macro.name}' with feedback: '{args.feedback}'...")
+        refined_macro = formulator.refine_macro(existing_macro=existing_macro, feedback=args.feedback)
+        refined_macro.save(p)
+        print(f"\n[REFINED] Updated macro saved to: {p}\n")
+        print("=" * 60)
+        print(refined_macro.to_text())
+        print("=" * 60)
+
+        if args.run:
+            runner = MacroRunner()
+            success = runner.run(refined_macro, use_hotkey=(not args.now), dry_run=args.dry_run)
+            sys.exit(0 if success else 1)
+        else:
+            print("\nTo run this refined macro:")
+            print(f"  pixi run macro run {p.name}\n")
 
     elif args.subcommand == "list":
         MACROS_DIR.mkdir(parents=True, exist_ok=True)

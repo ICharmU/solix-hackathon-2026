@@ -134,14 +134,18 @@ class TaskReplicator:
             payload = step.text_payload or ""
             logger.info(f"Typing text payload: '{payload}'")
             if not dry_run:
+                self.safety_monitor.pause_for_agent_action()
                 VirtualInput.type_text(payload)
+                self.safety_monitor.resume_after_agent_action()
             return True
 
         elif step.action_type == "KEY_COMBO":
             combo = step.key_combo or []
             logger.info(f"Dispatching key combination: {combo}")
             if not dry_run:
+                self.safety_monitor.pause_for_agent_action()
                 VirtualInput.send_key_combo(combo)
+                self.safety_monitor.resume_after_agent_action()
             return True
 
         else:

@@ -11,15 +11,18 @@ from src.agent.cli import execute_action
 class TestAgentCLI(unittest.TestCase):
 
     def test_cli_dry_run_target_found(self):
-        """Verifies dry-run execution on a visible element (e.g. 'File')."""
-        # File is visible in VS Code menu bar
-        success = execute_action(
-            find_text="File",
-            action="click",
-            dry_run=True,
-            use_hotkey=False,
-        )
-        self.assertTrue(success, "Should find 'File' on screen in dry-run mode.")
+        """Verifies dry-run execution on a located UI anchor element."""
+        from unittest.mock import patch
+        from src.agent.schemas import OCRBoundingBox
+        mock_boxes = [OCRBoundingBox(text="Terminal", x=100, y=200, width=50, height=20)]
+        with patch("src.agent.ocr_engine.WindowsOCREngine.recognize_image", return_value=mock_boxes):
+            success = execute_action(
+                find_text="Terminal",
+                action="click",
+                dry_run=True,
+                use_hotkey=False,
+            )
+            self.assertTrue(success, "Should find 'Terminal' on screen in dry-run mode.")
 
     def test_cli_target_not_found(self):
         """Verifies graceful handling when an element is not on screen."""
